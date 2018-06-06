@@ -202,32 +202,7 @@
     </dependencies>
 
     <!-- down jar from maven repository -->
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>nexus-snapshots</id>
-            <name>tf56 Repository</name>
-            <url>http://10.7.13.128:8081/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>nexus-releases</id>
-            <name>tf56 Repository</name>
-            <url>http://10.7.13.128:8081/nexus/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>3rd party</id>
-            <name>tf56 Repository</name>
-            <url>http://10.7.13.128:8081/nexus/content/repositories/thirdparty/</url>
-        </repository>
-    </repositories>
+
 
     <build>
         <finalName>acl</finalName>
