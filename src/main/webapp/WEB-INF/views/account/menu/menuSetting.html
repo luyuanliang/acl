@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tree Actions - jQuery EasyUI Demo</title>
+    <link id="css" rel="stylesheet" type="text/css" href="/acl/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/demo.css">
+    <script type="text/javascript" src="/acl/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery-1.11.3.js"></script>
+    <script type="text/javascript" src="/acl/easyui/common.js"></script>
+
+    <script>
+        $(function () {
+                var $jQuery = jQuery.noConflict();
+                $('#operateMenuDialog').dialog({
+                    closed: true,
+                });
+                $('#bindMenuRoleDialog').dialog({
+                    closed: true,
+                });
+            }
+        )
+
+        function collapseAll() {
+            $('#menuTree').tree('collapseAll');
+        }
+        function expandAll() {
+            $('#menuTree').tree('expandAll');
+        }
+
+        function getChecked() {
+            //var nodes = $('#menuTree').tree('getChecked');
+            var nodes = $('#menuTree').tree('getChecked', ['checked', 'indeterminate']);	// get checked and indeterminate nodes
+            var s = '';
+            for (var i = 0; i < nodes.length; i++) {
+                if (s != '') s += ',';
+                s += nodes[i].id;
+            }
+            if (s != '') {
+                $('#roleName').combobox('reload');
+                $('#bindMenuRoleDialog').dialog("open");
+            } else {
+                alert("请至少选择一个菜单");
+            }
+        }
+
+        function remove() {
+            var node = $('#menuTree').tree('getSelected');
+            $('#menuTree').tree('remove', node.target);
+
+        }
+
+        function operateMenu(operate) {
+            var node = $('#menuTree').tree('getSelected');
+            var title = "";
+            if ("beforeInsert" == operate) {
+                title = "向前添加一个新菜单";
+            } else if ("afterInsert" == operate) {
+                title = "向后添加一个新菜单";
+            } else if ("append" == operate) {
+                title = "添加一个子菜单";
+            } else if ("update" == operate) {
+                title = "更新菜单";
+            }
+            if (node) {
+                $('#operateMenuDialog').dialog({
+                    title: title,
+                });
+
+                $('#operateMenuDialog').dialog("open");
+
+                $('#operateMenuForm').form('load', {
+                    pathName: node.text,
+                    pathAddress: node.attributes.pathAddress,
+                    description: node.attributes.description,
+                    aclResourceId: node.id,
+                    operate: operate,
+                });
+            }
+        }
+
+        function deleteMenu() {
+            var node = $('#menuTree').tree('getSelected');
+            if (node) {
+                var node = $('#menuTree').tree('getSelected');
+                var aclResourceId = node.id;
+                $.messager.confirm("删除确认", "是否删除记录", function (r) {
+                    if (r) {
+                        $.get("/acl/account/menu/operateMenu.do?operate=delete&aclResourceId=" + aclResourceId, function (text) {
+                            var ajaxResult = eval('(' + text + ')');
+                            if (ajaxResult.result) {
+                                $('#menuTree').tree('remove', node.target);
+                            } else {
+                                displayAjaxResult(ajaxResult);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+
+        function commitOperateMenu(url) {
+            var $jQuery = jQuery.noConflict();
+            var checkPass = $('#operateMenuForm').form('validate');
+            if (!checkPass) {
+                return;
+            }
+            $.messager.confirm("新增确认", "是否新增记录", function (r) {
+                if (r) {
+                    $('#operateMenuForm').form('submit', {
+                        url: url,
+                        success: function (text) {
+                            var ajaxResult = eval('(' + text + ')');
+                            displayAjaxResult(ajaxResult);
+                            if (ajaxResult.result) {
+                                var operate = $('#operate_form').val();
+                                var node = $('#menuTree').tree('getSelected');
+                                $('#menuTree').tree('reload');
+                                $('#operateMenuDialog').panel('close');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function commitBindMenuRole(url) {
+            var $jQuery = jQuery.noConflict();
+            var checkPass = $('#bindMenuRoleDialog').form('validate');
+            if (!checkPass) {
+                return;
+            }
+            $.messager.confirm("绑定新菜单", "是否绑定菜单角色", function (r) {
+                if (r) {
+                    var nodes = $('#menuTree').tree('getChecked', ['checked', 'indeterminate']);	// get checked and indeterminate nodes
+                    var checkedNodeList = '';
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (checkedNodeList != '') checkedNodeList += ',';
+                        checkedNodeList += nodes[i].id;
+                    }
+
+                    $('#bindMenuRoleForm').form('submit', {
+                        url: "/acl/account/menu/bindMenuRole.do?aclResourceList=" + checkedNodeList,
+                        success: function (text) {
+                            var ajaxResult = eval('(' + text + ')');
+                            displayAjaxResult(ajaxResult);
+                            if (ajaxResult.result) {
+                                $('#bindMenuRoleDialog').panel('close');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function searchTree() {
+            var accountNum = $('#accountNum').val();
+            var accountName = $('#accountName').val();
+            var menuName = $('#menuName').combobox('getValue');
+            if(accountNum==null){
+                accountNum = "";
+            }
+            if(accountName==null){
+                accountName = "";
+            }
+            if(menuName==null){
+                menuName = "";
+            }
+            $('#menuTree').tree({
+                url: '/acl/account/menu/tree.do?tag=search&accountNum=' + accountNum + "&accountName=" + accountName+"&roleName="+menuName,
+            });
+        }
+
+
+    </script>
+
+</head>
+<body>
+
+
+<div id="condition" class="container_12" style="position: relative; padding: 0">
+    <div style="height: 10px"></div>
+
+    <div>
+        <form id="searchForm" method="post">
+
+            <div class="easyui-panel" style="width:100%;max-width:1000px;padding:0px">
+                <div style="margin-bottom:5px;float:left;padding:5px">
+                    <div><span>工号:</span><label><input id="accountNum" name="accountNum" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 100px; padding: 2px"/></label></div>
+                </div>
+                <div style="margin-bottom:5px;float:left;padding:5px">
+                    <div><span>员工名称:</span><label><input id="accountName" name="accountName" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 100px; padding: 2px"/></label></div>
+                </div>
+                <div style="margin-bottom:5px;float:left;padding:3px">
+                    <input id="menuName" class="easyui-combobox" name="roleName" style="width:250px;"
+                           data-options="
+								valueField: 'text',
+								textField: 'text',
+								label: '菜单角色',
+								editable:true,
+								url:'/acl/account/aclRole/selectDistinctList.do?distinct=roleName&flag=false&roleGroup=MENU',
+								">
+                </div>
+                <div style="margin-bottom:5px;float:left;padding:5px">
+                    <a href="#" class="easyui-linkbutton" onclick="searchTree()" style="width: 100px">查询</a>
+                </div>
+            </div>
+
+            <div style="margin:10px 0;">
+                <a href="#" class="easyui-linkbutton" onclick="collapseAll()" style="width: 100px">全部收起</a>
+                <a href="#" class="easyui-linkbutton" onclick="expandAll()" style="width: 100px">全部展开</a>
+                <a href="#" class="easyui-linkbutton" onclick="getChecked()" style="width: 100px">绑定菜单家角色</a>
+            </div>
+            <div style="height: 10px"></div>
+        </form>
+    </div>
+</div>
+
+
+<div class="easyui-panel" style="padding:5px">
+    <ul id="menuTree" class="easyui-tree" data-options="
+        url:'/acl/account/menu/tree.do',
+        method:'get',
+        animate:true,
+        lines:true,
+        checkbox:true,
+        formatter:function(node){
+            return node.text;
+        },
+        onContextMenu: function(e, node){
+            e.preventDefault();
+            // select the node
+            $('#menuTree').tree('select', node.target);
+            // display context menu
+            $('#mm').menu('show', {
+                left: e.pageX,
+                top: e.pageY
+            });
+        }">
+
+    </ul>
+</div>
+
+
+<div id="mm" class="easyui-menu" style="width:120px;">
+    <div onclick="operateMenu('append')" data-options="iconCls:'icon-add'">添加子节点</div>
+    <div onclick="operateMenu('beforeInsert')" data-options="iconCls:'icon-add'">前添加</div>
+    <div onclick="operateMenu('afterInsert')" data-options="iconCls:'icon-add'">后添加</div>
+    <div onclick="operateMenu('update')" data-options="iconCls:'icon-edit'">修改</div>
+    <div onclick="deleteMenu()" data-options="iconCls:'icon-remove'">删除</div>
+</div>
+
+<div id="operateMenuDialog" class="easyui-dialog" title="操作菜单" style="width:400px;height:300px;text-align:center"
+     data-options="iconCls:'icon-save',resizable:true,buttons:'#operateMenuDialogToolbar',modal:true">
+    <form id="operateMenuForm" method="post">
+        <div align="center">
+            <table>
+                <tr>
+                    <td>路径名称:</td>
+                    <td><label><input name="pathName" required class="easyui-textbox" data-options="" type="text" style="width: 250px; padding: 2px"/></label></td>
+                </tr>
+                <tr>
+                    <td>路径URL:</td>
+                    <td><label><input name="pathAddress" required class="easyui-textbox" data-options="" type="text" style="width: 250px; padding: 2px"/></label></td>
+                </tr>
+                <tr>
+                    <td>描述:</td>
+                    <td><label><input name="description" required class="easyui-textbox" data-options="multiline:true" style="width:250px;height:60px;padding: 2px"/></label></td>
+                </tr>
+                <tr hidden="true">
+                    <td>operate:</td>
+                    <td><label><input id="operate_form" name="operate" required class="easyui-textbox" data-options="multiline:true" style="width:250px;height:60px;padding: 2px"/></label></td>
+                </tr>
+                <tr hidden="true">
+                    <td>aclResourceId:</td>
+                    <td><label><input name="aclResourceId" required class="easyui-textbox" data-options="multiline:true" style="width:250px;height:60px;padding: 2px"/></label></td>
+                </tr>
+                <!--<tr hidden="true">-->
+                <!--<input name="operate" class="easyui-textbox" data-options="disabled:true" type="text"/></label>-->
+                <!--<input name="aclResourceId" class="easyui-textbox" data-options="disabled:true" type="text"/></label>-->
+                <!--</tr>-->
+
+
+            </table>
+        </div>
+    </form>
+</div>
+
+<div id="operateMenuDialogToolbar" style="text-align:center">
+    <a href="#" class="easyui-linkbutton" onclick="commitOperateMenu('/acl/account/menu/operateMenu.do')">保存</a>
+    <a href="#" class="easyui-linkbutton" onclick="$('#operateMenuDialog').dialog('close')">关闭</a>
+</div>
+
+<div id="bindMenuRoleDialog" class="easyui-dialog" title="绑定菜单角色" style="width:400px;height:150px;text-align:center"
+     data-options="iconCls:'icon-save',resizable:true,buttons:'#bindMenuRoleDialogToolbar',modal:true">
+    <div style="height: 15px"></div>
+
+    <form id="bindMenuRoleForm" method="post">
+        <div align="center">
+            <label>
+                <input id="roleName" class="easyui-combobox" required name="roleName" style="width:250px;"
+                       data-options="
+								valueField: 'text',
+								textField: 'text',
+								label: '菜单角色',
+								editable:false,
+								url:'/acl/account/aclRole/selectDistinctList.do?distinct=roleName&flag=false&roleGroup=MENU',
+								">
+            </label>
+        </div>
+    </form>
+</div>
+
+<div id="bindMenuRoleDialogToolbar" style="text-align:center">
+    <a href="#" class="easyui-linkbutton" onclick="commitBindMenuRole()">保存</a>
+    <a href="#" class="easyui-linkbutton" onclick="$('#bindMenuRoleDialog').dialog('close')">关闭</a>
+</div>
+
+</body>
+</html>

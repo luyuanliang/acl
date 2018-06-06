@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Collapse Title in Layout - jQuery EasyUI Demo</title>
+
+		<link id="css" rel="stylesheet" type="text/css" href="/acl/easyui/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="/acl/easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="/acl/easyui/demo.css">
+		<script type="text/javascript" src="/acl/easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="/acl/easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="/acl/easyui/jquery-1.11.3.js"></script>
+
+	<script>
+
+        $(document).ready(function(){
+
+        });
+
+        function uploadFile (searchform){
+            var $jQuery = jQuery.noConflict();
+
+            var params = getParams(searchform);
+            // 添加附加参数
+            $("#ff").form('submit', {
+                url: 'uploadFile.do',
+                data: $("#ff").serialize(),
+                success: function (result) {
+                }
+            });
+
+        }
+
+        function executeDefaultParam(p){
+            // 把rows 改成pageSize,修改分页参数名称
+            p.pageSize=p.rows;
+            p.pageNum=p.page;
+        }
+
+        function getParams(form){
+            var t = $(form).serializeArray();
+            var params = {};
+            for (let val of t) {
+                params[val.name] = val.value
+            }
+            return params;
+        }
+
+	</script>
+
+</head>
+<body>
+<div style="padding-bottom:5px;">
+	<form id="ff" name="ff" method="post" enctype="multipart/form-data">
+		<div>
+		<label>classname:</label>
+			<select id="work" name="work" style="width: 200px; padding: 2px">
+				<option value="1">上传账户</option>
+				<option value="2">上传角色</option>
+				<option value="3">上传资源</option>
+				<option value="4">上传资源-角色关系</option>
+				<option value="5">上传资源-账户关系</option>
+				<option value="6">上传账户-角色关系</option>
+
+			</select>
+		</div>
+		<div><label>文件:</label>
+			<label>
+				<input class="easyui-filebox" type="text" name="picture" data-options=""/>
+			</label>
+		</div>
+		<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width: 80px" onclick="uploadFile('#ff')">commit</a>
+		<li style="font-size:150%;"><a href="/acl/account/upload/downloadDemo.xlsx">下载模板</a> </li>
+	</form>
+</div>
+
+
+</body>
+</html>

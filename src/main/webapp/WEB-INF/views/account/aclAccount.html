@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Basic SearchBox - jQuery EasyUI Demo</title>
+
+    <link id="css" rel="stylesheet" type="text/css" href="/acl/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/demo.css">
+    <script type="text/javascript" src="/acl/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery-1.11.3.js"></script>
+    <script type="text/javascript" src="/acl/easyui/common.js"></script>
+
+    <script>
+
+        $(function () {
+                init();
+                $('#bindRole').dialog({
+                    closed: true,
+                });
+
+                $('#firstDepartment').combobox({
+                    onChange: function (newValue, oldValue) {
+                        searchRecords2('#searchForm', '/acl/account/aclAccount/selectAclAccountList.do');
+                    }
+                });
+
+                $('#secondDepartment').combobox({
+                    onChange: function (newValue, oldValue) {
+                        searchRecords2('#searchForm', '/acl/account/aclAccount/selectAclAccountList.do');
+                    }
+                });
+
+                $('#position').combobox({
+                    onChange: function (newValue, oldValue) {
+                        searchRecords2('#searchForm', '/acl/account/aclAccount/selectAclAccountList.do');
+                    }
+                });
+            }
+        );
+
+        function searchRecords(searchForm, url, recordGrid) {
+            var $jQuery = jQuery.noConflict();
+            var params = getParams(searchForm);
+            // 添加附加参数
+            params['param8s'] = 'aaaa';
+
+            $(recordGrid).datagrid({
+                onBeforeLoad: function (p) {
+                    return executeDefaultParam(p);
+                },
+                loadMsg: '正在加载信息...',
+                queryParams: params,
+                type: 'post',
+                url: url,
+                loadFilter: function (ajaxResult) {
+                    if (ajaxResult.result) {
+                        return ajaxResult;
+                    } else {
+                        return data;
+                    }
+                }
+            });
+        }
+
+        // 为新增记录FORM表单，追加额外的参数
+        function paramAddForm(param) {
+            console.log('param', param);
+            //teacherName: $('#teacherName_UpdateForm').val(),
+            //age: $('#age_UpdateForm').val(),
+            //birthday: $('#birthday_UpdateForm').datetimebox('getValue'),
+        }
+
+        // 为修改记录FORM表单，追加额外的参数
+        function paramUpdateForm(param) {
+            console.log('param11', param);
+            //teacherName: $('#teacherName_UpdateForm').val(),
+            //age: $('#age_UpdateForm').val(),
+            //birthday: $('#birthday_UpdateForm').datetimebox('getValue'),
+            console.log('param22', $('#aclAccountId_UpdateForm').val());
+            param.aclAccountId = $('#aclAccountId_UpdateForm').val();
+        }
+
+        function checkDeleteRow(row, rows, i) {
+            return row == rows[i].aclAccountId;
+        }
+
+        function formatOper(val, row, index) {
+            return ' <a class="Delete_Button" href="javascript:deleteOneRecord(\'aclAccountList\',\'' + row.aclAccountId + '\' , \'/acl/account/aclAccount/deleteAclAccount.do\')"> 删除 </a> '
+                + ' <a class="Update_Button" href="javascript:selectOneRecordForUpdate(\'' + row.aclAccountId + '\')"> 修改 </a> '
+            // +  ' <a class="Query_Button" href="javascript:selectOneRecord(\'' + row.aclAccountId + '\')"> 查询 </a> ' 
+        }
+
+
+        function selectOneRecordForUpdate(primaryKey) {
+            var $jQuery = jQuery.noConflict();
+            jQuery.ajax({
+                type: 'POST',
+                url: "/acl/account/aclAccount/selectAclAccountDetail.do",
+                data: {
+                    aclAccountId: primaryKey
+                },
+                success: function (text) {
+                    var ajaxResult = eval("(" + text + ")");
+                    if (!ajaxResult.result) {
+                        displayAjaxResult(ajaxResult);
+                    } else {
+                        $('#updateDialog').dialog("open");
+                        $('#updateForm').form('load', {
+                            accountNum: ajaxResult.data.accountNum,
+                            accountName: ajaxResult.data.accountName,
+                            phone: ajaxResult.data.phone,
+                            mail: ajaxResult.data.mail,
+                            firstDepartment: ajaxResult.data.firstDepartment,
+                            secondDepartment: ajaxResult.data.secondDepartment,
+                            department: ajaxResult.data.department,
+                            position: ajaxResult.data.position,
+                            accountStatus: ajaxResult.data.accountStatus,
+                            updateTime: ajaxResult.data.updateTime,
+                            aclAccountId: ajaxResult.data.aclAccountId
+                        });
+                    }
+                },
+                error: function () {
+                    $.messager.alert("操作提示", "查询记录失败", "ERROR");
+                }
+            });
+        }
+
+
+        function selectOneRecord(primaryKey) {
+            var $jQuery = jQuery.noConflict();
+            jQuery.ajax({
+                type: 'POST',
+                url: "/acl/account/aclAccount/selectAclAccountDetail.do",
+                data: {
+                    aclAccountId: primaryKey
+                },
+                success: function (text) {
+                    var ajaxResult = eval("(" + text + ")");
+                    if (!ajaxResult.result) {
+                        displayAjaxResult(ajaxResult);
+                    } else {
+                        $('#detailDialog').dialog("open");
+                        $('#detailForm').form('load', {
+                            aclAccountId: ajaxResult.data.aclAccountId,
+                            accountNum: ajaxResult.data.accountNum,
+                            accountName: ajaxResult.data.accountName,
+                            phone: ajaxResult.data.phone,
+                            firstDepartment: ajaxResult.data.firstDepartment,
+                            secondDepartment: ajaxResult.data.secondDepartment,
+                            department: ajaxResult.data.department,
+                            position: ajaxResult.data.position,
+                            accountStatus: ajaxResult.data.accountStatus,
+                            updateTime: ajaxResult.data.updateTime,
+                        });
+                    }
+                },
+                error: function () {
+                    $.messager.alert("操作提示", "查询记录失败", "ERROR");
+                }
+            });
+        }
+
+        function bindRole() {
+            //var row = $('#recordGrid').datagrid('getSelections');
+            var ids = [];
+            var deleteIds = "";
+            var rows = $('#recordGrid').datagrid('getChecked');
+            for (var i = 0; i < rows.length; i++) {
+                ids.push(rows[i].aclAccountId);
+            }
+            if (ids == "") {
+                alert("选一个啊！");
+            } else {
+                $('#bindRole').dialog({
+                    title: '绑定角色',
+                    width: 400,
+                    height: 100,
+                    closed: false,
+                    modal: true,
+                    href: '/acl/account/aclRole/bindRoleOpen.do?type=aclAccount&ids=' + ids,
+                });
+            }
+        }
+
+    </script>
+</head>
+<body>
+<div id="bindRole" style="height: 100px"></div>
+<div style="margin: 0; position: absolute; top:0; right:0;bottom: 0; left: 0">
+    <table id="recordGrid" class="easyui-datagrid" title="" style="width:100%;height:100%;margin:0 0 0 0"
+           data-options="pageSize: 20, pageList: [20, 50, 100,200],rownumbers:true,onLoadSuccess: onLoadSuccess,remoteSort:false,checkOnSelect:false,pagination:true,singleSelect:false,url:'',method:'post',toolbar:'#condition'">
+        <thead>
+        <tr>
+            <th data-options="field:'ck',checkbox:true"></th>
+            <th data-options="field:'accountNum',width:50,sortable:'true'" width="5%">工号</th>
+            <th data-options="field:'accountName',width:50,sortable:'true'" width="5%">员工名称</th>
+            <th data-options="field:'phone',width:50,sortable:'true'" width="6%">手机</th>
+            <th data-options="field:'mail',width:50,sortable:'true'" width="10%">邮箱</th>
+            <th data-options="field:'firstDepartment',width:50,sortable:'true'" width="10%">一级部门</th>
+            <th data-options="field:'secondDepartment',width:50,sortable:'true'" width="10%">二级部门</th>
+            <th data-options="field:'position',width:50,sortable:'true'" width="10%">职位</th>
+            <th data-options="field:'accountStatus',width:50,sortable:'true'" width="4%">状态</th>
+            <th data-options="field:'updateTime',width:50,sortable:'true'" width="10%">修改时间</th>
+            <th data-options="field:'aclAccountId',width:50,hidden:true" width="10%">PramaryKey</th>
+            <th data-options="field:'operate',width:50,align:'center',formatter:formatOper" width="10%">操作</th>
+        </tr>
+        </thead>
+    </table>
+
+    <div id="condition" class="container_12" style="position: relative; padding: 0">
+        <div style="height: 10px"></div>
+
+        <div>
+            <form id="searchForm" method="post">
+
+                <div class="easyui-panel" style="padding:0px">
+                    <div>
+                        <div style="margin-bottom:5px;float:left;padding:5px">
+                            <div><span> 工号 </span><label><input name="accountNum" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 100px; padding: 2px"/></label></div>
+                        </div>
+                        <div style="margin-bottom:5px;float:left;padding:5px">
+                            <div><span> 员工名称 </span><label><input name="accountName" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 100px; padding: 2px"/></label></div>
+                        </div>
+                        <div style="margin-bottom:5px;float:left;padding:5px">
+                            <div><span> 手机 </span><label><input name="phone" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 100px; padding: 2px"/></label></div>
+                        </div>
+                        <div style="margin-bottom:5px;float:left;padding:5px">
+                            <div><span>状态 </span>
+                                <label><select name="accountStatus" class="easyui-combobox" style="width: 100px; padding: 2px">
+                                    <option value="">全部</option>
+                                    <option value="ON">ON</option>
+                                    <option value="OFF">OFF</option>
+                                </select></label></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="margin-bottom:5px;float:left;padding:5px">
+                            <div>
+                                <span> 一级部门 </span>
+                                <input id="firstDepartment" class="easyui-combobox" name="firstDepartment" style="width:120px;"
+                                       data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=firstDepartment&flag=true',
+								labelPosition:'left'
+								"></div>
+                        </div>
+
+                        <div style="margin-bottom:5px;float:left;padding:5px">
+                            <div>
+                                <span> 二级部门 </span>
+                                <input id="secondDepartment" class="easyui-combobox" name="secondDepartment" style="width:120px;"
+                                       data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=secondDepartment&flag=true',
+								labelPosition:'left'
+								">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:5px;float:left;padding:5px">
+                            <div>
+                                <span> 职位 </span>
+                                <input id="position" class="easyui-combobox" name="position" style="width:120px;"
+                                       data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=position&flag=true',
+								labelPosition:'left'
+								">
+                            </div>
+                        </div>
+                        <div style="margin-bottom:5px;float:left;padding:5px">
+                            <div>
+                                <span> 角色 </span>
+                                <input id="roleName" class="easyui-combobox" name="roleName" style="width:120px;"
+                                       data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclRole/selectDistinctList.do?distinct=roleName&flag=true',
+								labelPosition:'left'
+								">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div style="height: 10px"></div>
+                <div>
+                    <a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width: 80px"
+                       onclick="searchRecords2('#searchForm','/acl/account/aclAccount/selectAclAccountList.do')">Search</a>
+                    <a id="cut" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" style="width: 80px" onclick="bindRole()">绑定角色</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="$('#addNewDialog').dialog('open')" style="width: 85px">新增记录</a>
+                    <span>选择模式: </span>
+                    <label><select style="width:120px;height:25px" onchange="$('#recordGrid').datagrid({singleSelect:(this.value==0)})">
+                        <option value="1">多行</option>
+                        <option value="0">单行</option>
+                    </select></label>
+                    <span style="color:#999">Themes:</span>
+                    <span>
+						<select id="cb-theme" style="width:120px;height:25px"></select>
+					</span>
+                </div>
+                <div style="height: 10px"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addNewDialog" class="easyui-dialog" title="ADD NEW RECORD" data-options="iconCls:'icon-save',buttons:'#addDialogToolbar',modal:false" style="width: 500px; height: 400px; padding: 10px">
+        <div style="padding: 10px 10px 10px 80px;text-align:center">
+            <form id="addNewForm" method="post">
+                <table>
+                    <tr>
+                        <td>工号:</td>
+                        <td><label><input id="accountNum_addForm" name="accountNum" required class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 200px; padding: 2px"/></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>员工名称:</td>
+                        <td><label><input id="accountName_addForm" name="accountName" required class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 200px; padding: 2px"/></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>手机:</td>
+                        <td><label><input id="phone_addForm" name="phone" required class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 200px; padding: 2px"/></label></td>
+                    </tr>
+                    <tr>
+                        <td>邮箱:</td>
+                        <td><label><input id="mail_addForm" name="mail" required class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 200px; padding: 2px"/></label></td>
+                    </tr>
+                    <tr>
+                        <td>一级部门：</td>
+                        <td>
+                            <input id="firstDepartment_addForm" class="easyui-combobox" name="firstDepartment" required style="width:200px;"
+                                   data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=firstDepartment',
+								labelPosition:'top'
+								">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>二级部门：</td>
+                        <td>
+                            <input id="secondDepartment_addForm" class="easyui-combobox" name="secondDepartment" required style="width:200px;"
+                                   data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=secondDepartment',
+								labelPosition:'top'
+								">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>职位：</td>
+                        <td>
+                            <input id="position_addForm" class="easyui-combobox" name="position" required style="width:200px;"
+                                   data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=position',
+								labelPosition:'top'
+								">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>状态:</td>
+                        <td>
+                            <label>
+                                <select id="accountStatus_addForm" name="accountStatus" class="textbox combo" style="width: 200px; padding: 2px">
+                                    <option value="ON">ON</option>
+                                    <option value="OFF">OFF</option>
+                                </select>
+                            </label>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <div id="addDialogToolbar" style="text-align: center; padding: 5px">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="addReordForm('/acl/account/aclAccount/insertAclAccount.do')">新增</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addNewForm').form('clear')">Clear</a>
+    </div>
+
+
+    <div id="updateDialog" class="easyui-dialog" title="Update Record" style="width:500px;height:400px;text-align:center"
+         data-options="iconCls:'icon-save',resizable:true,buttons:'#udpateDialogToolbar',modal:true">
+        <div style="padding: 10px 10px 10px 80px;text-align:center">
+            <form id="updateForm" method="post">
+                <table>
+
+                    <tr>
+                        <td>工号:</td>
+                        <td><label><input name="accountNum" class="easyui-textbox" data-options="disabled:true" type="text" style="width: 200px; padding: 2px"/></label></td>
+                    </tr>
+
+                    <tr>
+                        <td>修改时间:</td>
+                        <td><label><input name="updateTime" class="easyui-textbox" data-options="disabled:true" type="text" style="width: 200px; padding: 2px"/></label></td>
+                    </tr>
+
+                    <tr>
+                        <td>员工名称:</td>
+                        <td><label><input name="accountName" class="easyui-textbox" data-options="disabled:false" type="text" style="width: 200px; padding: 2px"/></label></td>
+                    </tr>
+                    <tr>
+                        <td>手机:</td>
+                        <td>
+                            <label><input name="phone" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width:200px;padding: 2px"/></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>邮箱:</td>
+                        <td>
+                            <label><input name="mail" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width:200px;padding: 2px"/></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>一级部门:</td>
+                        <td>
+                            <input id="firstDepartment_updateForm" class="easyui-combobox" name="firstDepartment" required style="width:200px;"
+                                   data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=firstDepartment',
+								labelPosition:'top'
+								">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>二级部门:</td>
+                        <td>
+                            <input id="secondDepartment_updateForm" class="easyui-combobox" name="secondDepartment" required style="width:200px;"
+                                   data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=secondDepartment',
+								labelPosition:'top'
+								">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>职位:</td>
+                        <td>
+                            <input id="position_updateForm" class="easyui-combobox" name="position" required style="width:200px;"
+                                   data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclAccount/selectDistinctList.do?distinct=position',
+								labelPosition:'top'
+								">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>状态:</td>
+                        <td>
+                            <label><select name="accountStatus" class="textbox combo" style="width: 200px; padding: 2px">
+                                <option value="ON">ON</option>
+                                <option value="OFF">OFF</option>
+                            </select></label>
+                        </td>
+                    </tr>
+                    <tr hidden="true">
+                        <td>userId:</td>
+                        <td><label><input id="aclAccountId_UpdateForm" name="aclAccountId" class="easyui-textbox" data-options="disabled:true" type="text"/></label></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <div id="udpateDialogToolbar" style="text-align:center">
+        <a href="#" class="easyui-linkbutton" onclick="updateOneRecord('/acl/account/aclAccount/updateAclAccount.do')">保存</a>
+        <a href="#" class="easyui-linkbutton" onclick="$('#updateDialog').dialog('close')">关闭</a>
+    </div>
+
+    <div id="detailDialog" class="easyui-dialog" title="Query Detail Record" style="padding:10px 10px 10px 100px;width:500px;height:400px;text-align:center"
+         data-options="iconCls:'icon-save',resizable:true,buttons:'#detailDialogToolbar',modal:true">
+        <form id="detailForm" method="post">
+            <table>
+                <tr>
+                    <td>主键:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="aclAccountId" style="width:200px"/></label></td>
+                </tr>
+                <tr>
+                    <td>工号:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="accountNum" style="width:200px"/></label></td>
+                </tr>
+                <tr>
+                    <td>员工名称:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="accountName" style="width:200px"/></label></td>
+                </tr>
+                <tr>
+                    <td>手机:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="phone" style="width:200px"/></label></td>
+                </tr>
+                <tr>
+                    <td>一级部门:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="firstDepartment" style="width:200px"/></label></td>
+                </tr>
+                <tr>
+                    <td>二级部门:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="secondDepartment" style="width:200px"/></label></td>
+                </tr>
+                <tr>
+                    <td>职位:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="position" style="width:200px"/></label></td>
+                </tr>
+                <tr>
+                    <td>状态:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="accountStatus" style="width:200px"/></label></td>
+                </tr>
+                <tr>
+                    <td>修改时间:</td>
+                    <td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="updateTime" style="width:200px"/></label></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <div id="detailDialogToolbar" style="text-align:center">
+        <a href="#" class="easyui-linkbutton" onclick="$('#detailDialog').dialog('close')">关闭</a>
+    </div>
+
+</body>
+</html>
+

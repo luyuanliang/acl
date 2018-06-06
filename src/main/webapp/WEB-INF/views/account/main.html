@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Layout - jQuery EasyUI Demo</title>
+    <link id="css" rel="stylesheet" type="text/css" href="/acl/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/demo.css">
+    <script type="text/javascript" src="/acl/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery-1.11.3.js"></script>
+    <script type="text/javascript" src="/acl/easyui/common.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("div[tag]").bind("click", function () {
+                var view = $(this).attr("view");
+                var title = $(this).html();
+                var url = view;
+                var content = '<iframe scrolling="auto" frameborder="0" src="' + url + '" style="width:99%;height:99%;"></iframe>';
+                $('#tabs').tabs('add', {
+                    title: title,
+                    content: content,
+                    closable: true
+                });
+            });
+
+            $('#tabs').tabs({
+                tools: '#tab-tools',
+            });
+
+            $('#businessLine').combobox({
+                url: '/acl/businessLine/selectBusinessLineList.do',
+                valueField: 'text',
+                textField: 'text',
+                onLoadSuccess: function (ajaxResult) {
+                    if (ajaxResult.result == null) {
+                        return ajaxResult;
+                    } else if (!ajaxResult.result) {
+                        displayAjaxResult(ajaxResult);
+                    } else {
+                        return ajaxResult.data;
+                    }
+                }
+            });
+
+
+            $('#businessLine').combobox({
+                onChange: function (newValue, oldValue) {
+                    if (newValue != null && newValue != "") {
+                        $.get('/acl/businessLine/changeBusinessLine.do?businessLineName=' + newValue, function (text) {
+                            var ajaxResult=eval("("+text+")");
+                            if (!ajaxResult.result) {
+                                $.messager.alert("操作提示", ajaxResult.msg, "ERROR");
+                            }
+                        });
+                    }
+                }
+            });
+
+        })
+
+        function selectBusinessLine() {
+            $('#businessLine').combobox('reload', '/acl/businessLine/selectBusinessLineList.do');
+        }
+
+    </script>
+</head>
+<body class="easyui-layout">
+<div style="width:15%;height:5%;"></div>
+
+<!-- 上部 -->
+<!-- <div data-options="region:'north',maxHeight:80  ,split:true,border:true" style="height:60px;padding:10px">north region</div>
+
+<!-- 下部 -->
+<!-- <div data-options="region:'south',split:false,border:true" style="height:50px;padding:10px;">south region</div> -->
+
+<div data-options="region:'west',maxWidth:250,minWidth:150,split:true,collapsed:false,title:'West',hideCollapsedContent:false" style="width:200px;padding:0;">
+    <div class="easyui-accordion" data-options="width:250,multiple:true">
+        <div title="TreeMenu" data-options="iconCls:'icon-search',selected:true" style="padding:0;">
+            <ul class="easyui-tree">
+                <li>
+                    <span>权限菜单</span>
+                    <ul>
+                        <li>
+                            <div tag="event" view="/acl/account/aclAccount/aclAccount.html">账户管理</div>
+                        </li>
+                        <li>
+                            <div tag="event" view="/acl/account/aclRole/aclRole.html">角色管理</div>
+                        </li>
+                        <li>
+                            <div tag="event" view="/acl/account/aclResource/aclResource.html">资源管理</div>
+                        </li>
+                        <li>
+                            <div tag="event" view="/acl/account/aclResourceRoleMapping/aclResourceRoleMapping.html">资源-角色管理</div>
+                        </li>
+                        <li>
+                            <div tag="event" view="/acl/account/aclResourceAccountMapping/aclResourceAccountMapping.html">资源-账户管理</div>
+                        </li>
+                        <li>
+                            <div tag="event" view="/acl/account/aclAccountRoleMapping/aclAccountRoleMapping.html">账户-角色管理</div>
+                        </li>
+                        <li>
+                            <div tag="event" view="/acl/account/menu/menuMain.html">菜单管理</div>
+                        </li>
+                        <li>
+                            <div tag="event" view="/acl/businessLine/businessLine.html">创建业务线</div>
+                        </li>
+                        <li>
+                            <div tag="event" view="/acl/account/upload/uploadView.html">上传</div>
+                        </li>
+
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div data-options="region:'east',split:true,collapsed:true,title:'East',hideCollapsedContent:true" style="width:100px;padding:10px;">east region</div>
+
+<div data-options="region:'center',title:''">
+    <div id="tabs" class="easyui-tabs" data-options="fit:true" style="width:auto;height:auto">
+        <div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
+            <li> help
+        </div>
+    </div>
+</div>
+
+<div id="tab-tools">
+    <span>请选择业务线: <input id="businessLine" class="easyui-combobox" name="businessLine" style="border:0px;width:100px;height: 20px"></span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<script>
+    function ssss() {
+        var $jQuery =   jQuery.noConflict();
+        var checkPass = $('#bindRoleForm').form('validate');
+        if(!checkPass){
+            return;
+        }
+        $.messager.confirm("绑定确认","是否绑定账户", function (r) {
+            if (r) {
+                $('#bindRoleForm').form('submit', {
+                    url: "/acl/account/aclAccount/bindAccount.do",
+                    onSubmit: function(param) {
+                        param.aclResourceList = '${aclResourceList}';
+                    },
+                    success: function (text) {
+                        $('#bindRole').dialog({
+                            closed: true,
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<form id="bindRoleForm" method="post">
+    <div align="center">
+        <span>先择角色:</span>
+        <label>
+            <select id="aclAccountId" name="aclAccountId" class="easyui-combobox" style="width: 150px; padding: 2px" required>
+                #foreach( $elem in $aclAccountList)
+                <option value="$elem.getAclAccountId()">$elem.getAccountName()</option>
+                #end
+            </select>
+        </label>
+        <a id="bindBatchRole" class="easyui-linkbutton" style="width: 80px" onclick="ssss()">绑定</a>
+    </div>
+</form>
+
+

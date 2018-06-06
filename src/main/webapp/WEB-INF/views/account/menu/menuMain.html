@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tree Actions - jQuery EasyUI Demo</title>
+    <link id="css" rel="stylesheet" type="text/css" href="/acl/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/demo.css">
+    <script type="text/javascript" src="/acl/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery-1.11.3.js"></script>
+    <script type="text/javascript" src="/acl/easyui/common.js"></script>
+    <script>
+        $(function () {
+                var $jQuery = jQuery.noConflict();
+                $('#menuMainTabs').tabs('add', {
+                    title: '菜单设置',
+                    content: '<iframe scrolling="auto" frameborder="0" src="/acl/account/menu/menuSetting.html" style="width: 750px;height:500px;"></iframe>',
+                    closable: false,
+                });
+
+            }
+        );
+
+    </script>
+</head>
+
+<div style="margin: 0;position: absolute; top:20px; right:0;bottom: 0; left: 0">
+    <div id="menuMainTabs" class="easyui-tabs">
+        <div title="菜单管理说明" data-options="iconCls:'icon-help',closable:true" style="padding:15px;width: 150px">
+            <p style="font-size:14px">TBD, ask Yuanliang GEGE</p>
+        </div>
+    </div>
+</div>
+</body>
+
+
+</html>

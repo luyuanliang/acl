@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tree Actions - jQuery EasyUI Demo</title>
+    <link id="css" rel="stylesheet" type="text/css" href="/acl/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/demo.css">
+    <script type="text/javascript" src="/acl/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery-1.11.3.js"></script>
+    <script type="text/javascript" src="/acl/easyui/common.js"></script>
+
+    <script>
+        $(function () {
+                var $jQuery = jQuery.noConflict();
+            }
+        )
+
+    </script>
+
+</head>
+<body>
+
+<div style="margin:20px 0;">
+    <div style="margin:10px 0">
+    </div>
+</div>
+
+    <div style="padding:5px;border:1px solid #95B8E7">
+        <ul id="selectedNodeTree" class="easyui-tree" data-options="
+        url:'/acl/account/menu/tree.do',
+        method:'get',
+        animate:true,
+        lines:true,
+        checkbox:true,
+        formatter:function(node){
+            return node.text;
+        },
+        onContextMenu: function(e, node){
+            e.preventDefault();
+            // select the node
+            $('#selectedNodeTree').tree('select', node.target);
+            // display context menu
+            $('#mm').menu('show', {
+                left: e.pageX,
+                top: e.pageY
+            });
+        }">
+        </ul>
+    </div>
+
+</body>
+</html>

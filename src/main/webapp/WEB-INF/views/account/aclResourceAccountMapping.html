@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Basic SearchBox - jQuery EasyUI Demo</title>
+
+    <link id="css" rel="stylesheet" type="text/css" href="/acl/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/demo.css">
+    <script type="text/javascript" src="/acl/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery-1.11.3.js"></script>
+    <script type="text/javascript" src="/acl/easyui/common.js"></script>
+
+    <script>
+
+        $(function () {
+                init();
+
+                $('#resourceName').combobox({
+                    onChange: function (newValue, oldValue) {
+                        searchRecords2('#searchForm', '/acl/account/aclResourceRoleMapping/selectAclResourceRoleMappingList.do');
+                    }
+                });
+
+                $('#resourceKey').combobox({
+                    onChange: function (newValue, oldValue) {
+                        searchRecords2('#searchForm', '/acl/account/aclResourceRoleMapping/selectAclResourceRoleMappingList.do');
+                    }
+                });
+
+                $('#resourcevalue').combobox({
+                    onChange: function (newValue, oldValue) {
+                        searchRecords2('#searchForm', '/acl/account/aclResourceRoleMapping/selectAclResourceRoleMappingList.do');
+                    }
+                });
+
+
+            }
+        );
+
+        function searchRecords(searchForm, url, recordGrid) {
+            var $jQuery = jQuery.noConflict();
+            var params = getParams(searchForm);
+            // 添加附加参数
+
+            $(recordGrid).datagrid({
+                onBeforeLoad: function (p) {
+                    return executeDefaultParam(p);
+                },
+                loadMsg: '正在加载信息...',
+                queryParams: params,
+                type: 'post',
+                url: url,
+                loadFilter: function (ajaxResult) {
+                    if (ajaxResult.result) {
+                        return ajaxResult;
+                    } else {
+                        return data;
+                    }
+                }
+            });
+        }
+
+        // 为新增记录FORM表单，追加额外的参数
+        function paramAddForm(param) {
+            //teacherName: $('#teacherName_UpdateForm').val(),
+            //age: $('#age_UpdateForm').val(),
+            //birthday: $('#birthday_UpdateForm').datetimebox('getValue'),
+            param.p1 = 'value1';
+            param.p2 = 'value2';
+        }
+
+        function checkDeleteRow(row,rows,i){
+            return row==rows[i].aclResourceAccountMappingId;
+        }
+
+
+        // 为修改记录FORM表单，追加额外的参数
+        function paramUpdateForm(param) {
+            param.aclResourceId = $('#aclResourceId_UpdateForm').val();
+        }
+
+        function formatOper(val, row, index) {
+            return ' <a class="Delete_Button" href="javascript:deleteOneRecord(\'aclResourceAccountMappingList\',\'' + row.aclResourceAccountMappingId + '\' , \'/acl/account/aclResourceAccountMapping/deleteAclResourceAccountMapping.do\')"> 删除 </a> '
+        }
+
+    </script>
+</head>
+<body>
+
+
+<div style="margin: 0; position: absolute; top:0; right:0;bottom: 0; left: 0">
+    <table id="recordGrid" class="easyui-datagrid" title="" style="width:100%;height:100%;margin:0 0 0 0"
+           data-options="pageSize: 20, pageList: [20, 50, 100,200],rownumbers:true,onLoadSuccess: onLoadSuccess,remoteSort:false,checkOnSelect:false,pagination:true,singleSelect:false,url:'',method:'post',toolbar:'#condition'">
+        <thead>
+        <tr>
+            <th data-options="field:'ck',checkbox:true"></th>
+            <th data-options="field:'accountNum',width:50,sortable:'true'" width="12%">账户号</th>
+            <th data-options="field:'accountName',width:50,sortable:'true'" width="12%">账户名称</th>
+            <th data-options="field:'resourceName',width:50,sortable:'true'" width="10%">资源名称</th>
+            <th data-options="field:'resourceKey',width:50,sortable:'true'" width="10%">资源(KEY)</th>
+            <th data-options="field:'resourceValue',width:50,sortable:'true'" width="10%">资源(VALUE)</th>
+            <th data-options="field:'resourceLevel',width:25,sortable:'true'" width="8%">资源(LEVEL)</th>
+            <th data-options="field:'resourceType',width:50,sortable:'true'" width="10%">类型</th>
+            <th data-options="field:'aclResourceAccountMappingId',width:50,hidden:true" width="10%">PramaryKey</th>
+            <th data-options="field:'operate',width:50,align:'center',formatter:formatOper" width="10%">操作</th>
+        </tr>
+        </thead>
+    </table>
+
+    <div id="condition" class="container_12" style="position: relative; padding: 0">
+        <div style="height: 10px"></div>
+        <form id="searchForm" method="post">
+
+            <div class="easyui-panel" style="width:100%;max-width:2000px;padding:0px">
+
+                <div style="margin-bottom:5px;float:left;padding:5px">
+                    <div><span> 工号 </span><label><input name="accountNum" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 100px; padding: 2px"/></label></div>
+                </div>
+
+                <div style="margin-bottom:5px;float:left;padding:5px">
+                    <div><span> 员工名称 </span><label><input name="accountName" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 100px; padding: 2px"/></label></div>
+                </div>
+
+
+                <div style="margin-bottom:5px;float:left;padding:5px">
+                    <span> 资源名称 </span>
+                    <input id="resourceName" class="easyui-combobox" name="resourceName" style="width:120px;"
+                           data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclResource/selectDistinctList.do?distinct=resourceName',
+								labelPosition:'left'
+								">
+                </div>
+
+                <div style="margin-bottom:5px;float:left;padding:5px">
+                    <span> 资源(KEY） </span>
+                    <input id="resourceKey" class="easyui-combobox" name="resourceKey" style="width:120px;"
+                           data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclResource/selectDistinctList.do?distinct=resourceKey',
+								labelPosition:'left'
+								">
+                </div>
+
+                <div style="margin-bottom:5px;float:left;padding:5px">
+                    <span> 资源(VALUE) </span>
+                    <input id="resourceValue" class="easyui-combobox" name="resourceValue" style="width:120px;"
+                           data-options="
+								valueField: 'text',
+								textField: 'text',
+								url:'/acl/account/aclResource/selectDistinctList.do?distinct=resourceValue',
+								labelPosition:'left'
+								">
+                </div>
+
+                </div>
+
+            <div style="height: 10px">
+            </div>
+            <div>
+                <a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width: 80px"
+                   onclick="searchRecords2('#searchForm','/acl/account/aclResourceAccountMapping/selectAclResourceAccountMappingList.do')">Search</a>
+
+                <span>选择模式: </span>
+                <label><select style="width:120px;height:25px" onchange="$('#recordGrid').datagrid({singleSelect:(this.value==0)})">
+                    <option value="1">多行</option>
+                    <option value="0">单行</option>
+                </select></label>
+                <span style="color:#999">Themes:</span>
+                <span>
+							<select id="cb-theme" style="width:120px;height:25px"></select>
+						</span>
+            </div>
+            <div style="height: 10px"></div>
+        </form>
+    </div>
+</div>
+
+
+</body>
+</html>
+

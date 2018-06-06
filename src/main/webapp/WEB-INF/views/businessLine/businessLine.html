@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Basic SearchBox - jQuery EasyUI Demo</title>
+
+    <link id="css" rel="stylesheet" type="text/css" href="/acl/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/acl/easyui/demo.css">
+    <script type="text/javascript" src="/acl/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/acl/easyui/jquery-1.11.3.js"></script>
+    <script type="text/javascript" src="/acl/easyui/common.js"></script>
+
+    <script>
+
+        $(function () {
+            }
+        );
+
+        function createNewBusinessLine() {
+            var checkPass = $('#landForm').form('validate');
+            if (!checkPass) {
+                return;
+            }
+            var $jQuery = jQuery.noConflict();
+            $('#businessLine').form('submit', {
+                url: '/acl/businessLine/createBusinessLine.do',
+                success: function (text) {
+                    var ajaxResult = eval('(' + text + ')');
+                    displayAjaxResult(ajaxResult);
+                    if(ajaxResult.result){
+                       // window.location.href='/acl/main.html';
+                    }
+                }
+            });
+        }
+
+    </script>
+</head>
+<body>
+<div>
+    <form id="businessLine" method="post">
+        <div style="text-align:center">
+            <span>新业务线:<label><input name="businessLineName" class="easyui-textbox" data-options="iconWidth:30,prompt:''" value="BOSS" required style="width: 150px; padding: 2px"/></label></span>
+        </div>
+        <div style="height:15px"></div>
+    </form>
+    <div id="landDialogToolbar" style="text-align: center; padding: 5px">
+        <a href="javascript:void(0)" class="easyui-linkbutton" style="width:100px;" onclick="createNewBusinessLine()"> 创建新业务 </a>
+    </div>
+</div>
+</body>
+</html>
+
