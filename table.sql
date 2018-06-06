@@ -18,7 +18,7 @@ CREATE TABLE `AclAccount` (
 
 
 CREATE TABLE `AclAccountRoleMapping` (
-  `aclAccountRoleMappingId` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',``
+  `aclAccountRoleMappingId` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `businessLine` varchar(25) NOT NULL COMMENT '业务线',
   `aclAccountId` int(11) NOT NULL COMMENT 'AclAccount表主键',
   `accountNum` varchar(25) NOT NULL COMMENT '账户ID,相当与aclAccountId',

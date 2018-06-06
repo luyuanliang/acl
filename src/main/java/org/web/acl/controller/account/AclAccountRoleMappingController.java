@@ -66,14 +66,14 @@ public class AclAccountRoleMappingController implements ACLConstant {
             QueryAclRole queryAclRole = AclHelper.buildBeanByRequest(request, QueryAclRole.class);
             Integer pageSize = queryAclRole.getPageSize();
             Integer pageNum = queryAclRole.getPageNum();
-            queryAclRole.setAllResoced();
+            queryAclRole.setAllRecords();
             Map<Long, AclRoleDO> aclRoleMap = aclRoleService.selectAclRoleMap(queryAclRole);
             if (aclRoleMap.keySet().size() == 0) {
                 return gson.toJson(result);
             }
 
             QueryAclAccount queryAclAccount = AclHelper.buildBeanByRequest(request, QueryAclAccount.class);
-            queryAclAccount.setAllResoced();
+            queryAclAccount.setAllRecords();
             Map<Long, AclAccountDO> aclAccountMap = aclAccountService.selectAclAccountMap(queryAclAccount);
             if (aclAccountMap.keySet().size() == 0) {
                 return gson.toJson(result);

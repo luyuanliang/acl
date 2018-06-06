@@ -49,12 +49,12 @@ public class BusinessLineController implements ACLConstant {
 
     @RequestMapping(value = "selectBusinessLineList", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String selectBusinessLineList(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String selectBusinessLineList(HttpServletRequest request, HttpServletResponse response) {
 
         ViewResult<List<Map<String, String>>> viewResult = new ViewResult<>(true);
         try {
             Gson gson = new Gson();
-            List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
+            List<Map<String, String>> listMap = new ArrayList<>();
             viewResult.setData(listMap, true);
             SessionAccountDO sessionAccountDO = SessionAccountHelper.getSessionAccountFromRequest(request);
             QueryAclRole queryAclRole = new QueryAclRole();
@@ -109,13 +109,13 @@ public class BusinessLineController implements ACLConstant {
     }
 
     @RequestMapping(value = "businessLine", method = {RequestMethod.GET, RequestMethod.POST})
-    public String businessLine(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String businessLine(HttpServletRequest request, HttpServletResponse response) {
         return "businessLine/businessLine";
     }
 
     @RequestMapping(value = "createBusinessLine", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String createBusinessLine(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String createBusinessLine(HttpServletRequest request, HttpServletResponse response) {
         ViewResult<AclRoleDO> viewResult = new ViewResult<>(true);
         try {
             String businessLine = request.getParameter("businessLineName");
@@ -132,7 +132,7 @@ public class BusinessLineController implements ACLConstant {
 
             aclAccountRoleMappingDO.setAccountNum(sessionAccountDO.getAccountNum());
             aclAccountRoleMappingDO.setBusinessLine(businessLine);
-            aclAccountRoleMappingDO.setAclAccountId(Long.valueOf(sessionAccountDO.getSessionAcountId()));
+            aclAccountRoleMappingDO.setAclAccountId(Long.valueOf(sessionAccountDO.getAccountNum()));
             aclAccountRoleMappingDO.setInputer(SessionAccountHelper.getSessionAccountVaue(request));
             aclAccountRoleMappingService.insertAclAccountRoleMapping(aclAccountRoleMappingDO);
             //viewResult.setData(aclRoleDO);
@@ -145,7 +145,7 @@ public class BusinessLineController implements ACLConstant {
 
     @RequestMapping(value = "changeBusinessLine", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String changeBusinessLine(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String changeBusinessLine(HttpServletRequest request, HttpServletResponse response) {
         ViewResult<AclRoleDO> viewResult = new ViewResult<>(true);
         try {
             String businessLine = request.getParameter("businessLineName");
