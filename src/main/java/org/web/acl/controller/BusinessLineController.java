@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.web.acl.domain.AclAccountRoleMappingDO;
+import org.web.acl.domain.AclResourceDO;
 import org.web.acl.domain.AclRoleDO;
 import org.web.acl.domain.SessionAccountDO;
 import org.web.acl.helper.ACLConstant;
@@ -15,6 +16,7 @@ import org.web.acl.helper.SessionAccountHelper;
 import org.web.acl.query.QueryAclAccountRoleMapping;
 import org.web.acl.query.QueryAclRole;
 import org.web.acl.service.AclAccountRoleMappingService;
+import org.web.acl.service.AclResourceService;
 import org.web.acl.service.AclRoleService;
 import org.web.domain.ViewResult;
 import org.web.exception.ResultMessageEnum;
@@ -25,7 +27,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,9 @@ public class BusinessLineController implements ACLConstant {
 
     @Resource
     private AclRoleService aclRoleService;
+
+    @Resource
+    private AclResourceService aclResourceService;
 
     @Resource
     private AclAccountRoleMappingService aclAccountRoleMappingService;
@@ -135,6 +139,24 @@ public class BusinessLineController implements ACLConstant {
             aclAccountRoleMappingDO.setAclAccountId(Long.valueOf(sessionAccountDO.getAccountNum()));
             aclAccountRoleMappingDO.setInputer(SessionAccountHelper.getSessionAccountVaue(request));
             aclAccountRoleMappingService.insertAclAccountRoleMapping(aclAccountRoleMappingDO);
+
+            try {
+                // 设置默认菜单
+                AclResourceDO aclResourceDO = new AclResourceDO();
+                aclResourceDO.setInputer(SessionAccountHelper.getSessionAccountVaue(request));
+                aclResourceDO.setExtendsValue("01");
+                aclResourceDO.setBusinessLine(businessLine);
+                aclResourceDO.setDescription("第一个菜单");
+                aclResourceDO.setFirstLevel("01");
+                aclResourceDO.setResourceKey("第一个菜单");
+                aclResourceDO.setResourceValue("第一个URL");
+                aclResourceDO.setResourceLevel("1");
+                aclResourceDO.setResourceStatus("ON");
+                aclResourceDO.setResourceName(ACL_RESOURCE_MENU);
+                aclResourceService.insertAclResource(aclResourceDO);
+            } catch (Exception e) {
+
+            }
             //viewResult.setData(aclRoleDO);
             return new Gson().toJson(viewResult);
         } catch (Exception e) {
