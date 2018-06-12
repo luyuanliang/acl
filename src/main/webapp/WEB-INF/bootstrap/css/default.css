@@ -1,0 +1,41 @@
+
+.dialog-width .modal-dialog {
+    width: 450px;
+}
+
+.update_form table {
+    border-collapse: collapse;
+}
+
+.update_form td {
+    padding-top: 5px;
+}
+
+
+.update_form tr td:nth-child(1) {
+    padding-right: 10px;
+}
+
+.detail_form table {
+    border-collapse: collapse;
+}
+
+.detail_form td {
+    padding-top: 5px;
+}
+
+.detail_form tr td:nth-child(1) {
+    padding-right: 10px;
+}
+
+.add_form table {
+    border-collapse: collapse;
+}
+
+.add_form td {
+    padding-top: 5px;
+}
+
+.add_form tr td:nth-child(1) {
+    padding-right: 10px;
+}
