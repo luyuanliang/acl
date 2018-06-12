@@ -97,8 +97,9 @@ public class OutterController implements ACLOutterConstant {
         return gson.toJson(result);
     }
 
-    private ViewResult<List<AclResourceDO>> buildZeroResult(ViewResult<List<AclResourceDO>> result ){
+    private ViewResult buildZeroResult(ViewResult<List<AclResourceDO>> result ){
         result.setTotal(0);
+        result.setData(new ArrayList());
         result.setMsg("查询成功");
         result.setType("info");
         return result;
