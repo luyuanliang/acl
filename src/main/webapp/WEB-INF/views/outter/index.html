@@ -34,15 +34,21 @@
     <form id="search_form" class="form-inline">
 
         <div class="form-group" style="padding-right: 5px; float: left;">
+            <label for="name_search_form" style="padding-right: 5px"> 业务线或者应用
+            </label> <input id="businessLine_search_form" name="resourceKey" value="$!{resourceKey}" class="form-control">
+        </div>
+
+        <div class="form-group" style="padding-right: 5px; float: left;">
             <label for="name_search_form" style="padding-right: 5px"> 角色
-            </label> <input id="name_search_form" name="resourceName" class="form-control">
+            </label> <input id="name_search_form" name="resourceValue" class="form-control">
         </div>
 
 
         <div class="form-group" style="padding-right: 5px; float: left;">
             <label for="status_search_form" style="padding-right: 5px">
-                状态 </label> <select id="status_search_form" name="status"
+                状态 </label> <select id="status_search_form" name="resourceStatus"
                                     class="form-control">
+            <option></option>
             <option>ON</option>
             <option>OFF</option>
         </select>
@@ -157,6 +163,10 @@
                 formatter : 'IdFormatter',
             }, {
                 field : 'resourceKey',
+                title : '业务线或者应用',
+                sortable : true,
+            }, {
+                field : 'resourceValue',
                 title : '角色',
                 sortable : true,
             }, {
@@ -174,16 +184,20 @@
                 title : '一级'
             }, {
                 field : 'secondLevel',
-                title : '二级'
+                title : '二级',
+                visible : false
             }, {
                 field : 'thirdLevel',
-                title : '三级'
+                title : '三级',
+                visible : false
             }, {
                 field : 'fourthLevel',
-                title : '四级'
+                title : '四级',
+                visible : false
             },  {
                 field : 'fifthLevel',
-                title : '五级'
+                title : '五级',
+                visible : false
             }, {
                 field : 'description',
                 title : '描述'

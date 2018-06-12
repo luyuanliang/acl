@@ -49,6 +49,7 @@ public class OutterController implements ACLOutterConstant {
             response.sendRedirect("/acl/error/error.html?msg=" + "业务线不能为空！！！");
             return null;
         }
+        request.setAttribute("resourceKey",request.getParameter(OUTTER_BUSINESS_LINE));
         request.setAttribute(BUSINESS_LINE,businessLine);
         return "outter/index";
     }
