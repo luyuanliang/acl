@@ -33,7 +33,7 @@
 <div id="condition" class="panel panel-default panel-info"  style="padding: 5px;">
     <form id="search_form" class="form-inline">
 
-        <div class="form-group" style="padding-right: 5px; float: left;">
+        <div class="form-group" style="padding-right: 5px; float: left;display: none;">
             <label for="name_search_form" style="padding-right: 5px"> 业务线或者应用
             </label> <input id="businessLine_search_form" name="resourceKey" value="$!{resourceKey}" class="form-control">
         </div>
@@ -55,24 +55,19 @@
         </div>
 
         <div class="form-group" style="padding-right: 5px; float: left;">
-            <label for="level_search_form" style="padding-right: 5px">
-                等级 </label> <select id="level_search_form" name="resourceLevel"
-                                    class="form-control">
-            <option></option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-        </select>
+            <label for="level_search_form" style="padding-right: 5px">等级</label>
+                <select id="level_search_form" name="resourceLevel" class="form-control">
+                    <option></option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
         </div>
 
-        <div class="form-group" style="padding-right: 5px">
-            <label for="beginTime_search_form" style="padding-right: 5px">
-                结束日期 </label> <input id="beginTime_search_form" name="beginTime"
-                                     class="form-control" size="16" value=""> <span
-                class="add-on"><i class="icon-remove"></i></span> <span
-                class="add-on"><i class="icon-calendar"></i></span>
+        <div class="form-group" style="padding-right: 5px;">
+             <input id="beginTime_search_form" name="beginTime" class="form-control" value="">
         </div>
 
     </form>
@@ -205,6 +200,10 @@
                 field : 'operate',
                 title : 'operate',
                 formatter : "operatorFormat",
+            },{
+                field : 'aclResourceId',
+                title : 'aclResourceId',
+                visible : false,
             } ],
             exportDataType : 'selected',
         });
@@ -223,9 +222,9 @@
     });
 
     function operatorFormat(value, row, index) {
-        var d = '<a href="#" mce_href="#" onclick="deleteOneRecord(\'primaryId\',\''
-            + row.primaryId
-            + '\' , \'/acl/user/deleteRecord.do\')">解绑</a> ';
+        var d = '<a href="#" mce_href="#" onclick="deleteOneRecord(\'aclResourceId\',\''
+            + row.aclResourceId
+            + '\' , \'/acl/outter/deleteAclResourceAccountMapping.do\')">解绑</a> ';
         return  d;
     }
 

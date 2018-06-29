@@ -4,15 +4,13 @@ package org.web.acl.controller.outter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.lang.StringUtils;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.web.acl.domain.AclAccountDO;
-import org.web.acl.domain.AclResourceAccountMappingDO;
-import org.web.acl.domain.AclResourceDO;
-import org.web.acl.domain.SessionAccountDO;
+import org.web.acl.domain.*;
 import org.web.acl.helper.ACLOutterConstant;
 import org.web.acl.helper.AclHelper;
 import org.web.acl.helper.SessionAccountHelper;
@@ -22,6 +20,7 @@ import org.web.acl.query.QueryAclResourceAccountMapping;
 import org.web.acl.service.AclResourceAccountMappingService;
 import org.web.acl.service.AclResourceService;
 import org.web.domain.ViewResult;
+import org.web.helper.EnumHelper;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -49,8 +48,8 @@ public class OutterController implements ACLOutterConstant {
             response.sendRedirect("/acl/error/error.html?msg=" + "业务线不能为空！！！");
             return null;
         }
-        request.setAttribute("resourceKey",request.getParameter(OUTTER_BUSINESS_LINE));
-        request.setAttribute(BUSINESS_LINE,businessLine);
+        request.setAttribute("resourceKey", request.getParameter(OUTTER_BUSINESS_LINE));
+        request.setAttribute(BUSINESS_LINE, businessLine);
         return "outter/index";
     }
 
@@ -62,12 +61,12 @@ public class OutterController implements ACLOutterConstant {
 
         String businessLine = request.getParameter(BUSINESS_LINE);
         SessionAccountDO sessionAccountDO = SessionAccountHelper.getSessionAccountFromRequest(request);
-        QueryAclResource queryAclResource  = AclHelper.buildBeanByRequest(request,QueryAclResource.class);
+        QueryAclResource queryAclResource = AclHelper.buildBeanByRequest(request, QueryAclResource.class);
         queryAclResource.setBusinessLine(businessLine);
         queryAclResource.setResourceName(FIXED_ROLE);
         Map<Long, AclResourceDO> aclResourceDOMap = aclResourceService.selectAclResourceMap(queryAclResource);
         List<Long> aclResourceIdList = new ArrayList<>();
-        if(aclResourceDOMap.size()==0){
+        if (aclResourceDOMap.size() == 0) {
             return gson.toJson(buildZeroResult(result));
         }
 
@@ -80,16 +79,16 @@ public class OutterController implements ACLOutterConstant {
         queryAclResourceAccountMapping.setAclResourceIdList(aclResourceIdList);
         queryAclResourceAccountMapping.setAccountNum(sessionAccountDO.getAccountNum());
         int count = aclResourceAccountMappingService.countAclResourceAccountMappingList(queryAclResourceAccountMapping);
-        if(count == 0){
+        if (count == 0) {
             return gson.toJson(buildZeroResult(result));
         }
         List<AclResourceAccountMappingDO> aclResourceAccountMappingDOList = aclResourceAccountMappingService.selectAclResourceAccountMappingList(queryAclResourceAccountMapping);
         List<AclResourceDO> aclResourceDOList = new ArrayList<>();
-        for(AclResourceAccountMappingDO aclResourceAccountMappingDO:aclResourceAccountMappingDOList){
+        for (AclResourceAccountMappingDO aclResourceAccountMappingDO : aclResourceAccountMappingDOList) {
             aclResourceDOList.add(aclResourceDOMap.get(aclResourceAccountMappingDO.getAclResourceId()));
         }
 
-        result.setData(aclResourceDOList,true);
+        result.setData(aclResourceDOList, true);
         result.setTotal(count);
         result.setRows(aclResourceDOList);
         result.setMsg("查询成功");
@@ -98,12 +97,32 @@ public class OutterController implements ACLOutterConstant {
         return gson.toJson(result);
     }
 
-    private ViewResult buildZeroResult(ViewResult<List<AclResourceDO>> result ){
+    private ViewResult buildZeroResult(ViewResult<List<AclResourceDO>> result) {
         result.setTotal(0);
         result.setData(new ArrayList());
         result.setMsg("查询成功");
         result.setType("info");
         return result;
+    }
+
+    @RequestMapping(value = "deleteAclResourceAccountMapping", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public String deleteAclResourceAccountMapping(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ViewResult<AclResourceAccountMappingDO> viewResult = new ViewResult<>(true);
+        SessionAccountDO sessionAccountDO = SessionAccountHelper.getSessionAccountFromRequest(request);
+        String aclResourceIdStr = request.getParameter("aclResourceId");
+        Long aclResourceId = Long.valueOf(aclResourceIdStr);
+        QueryAclResourceAccountMapping queryAclResourceAccountMapping = new QueryAclResourceAccountMapping();
+        queryAclResourceAccountMapping.setAclResourceId(queryAclResourceAccountMapping.getAclResourceId());
+        queryAclResourceAccountMapping.setAccountNum(sessionAccountDO.getAccountNum());
+        AclResourceAccountMappingDO aclResourceAccountMappingDO = aclResourceAccountMappingService.selectOneAclResourceAccountMapping(queryAclResourceAccountMapping);
+        if (aclResourceAccountMappingDO != null) {
+            AclResourceAccountMappingDO update = new AclResourceAccountMappingDO();
+            update.setAclResourceAccountMappingId(aclResourceAccountMappingDO.getAclResourceAccountMappingId());
+            update.setIsDelete(EnumHelper.DELETE.Y.name());
+            aclResourceAccountMappingService.updateAclResourceAccountMappingByAclResourceAccountMappingId(update);
+        }
+        return new Gson().toJson(viewResult);
     }
 
 }
