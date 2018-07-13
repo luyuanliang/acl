@@ -4,17 +4,16 @@ package org.web.acl.controller.outter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.annotations.Delete;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.web.acl.domain.*;
+import org.web.acl.domain.AclResourceAccountMappingDO;
+import org.web.acl.domain.AclResourceDO;
+import org.web.acl.domain.SessionAccountDO;
 import org.web.acl.helper.ACLOutterConstant;
 import org.web.acl.helper.AclHelper;
 import org.web.acl.helper.SessionAccountHelper;
-import org.web.acl.query.QueryAclAccount;
 import org.web.acl.query.QueryAclResource;
 import org.web.acl.query.QueryAclResourceAccountMapping;
 import org.web.acl.service.AclResourceAccountMappingService;
@@ -26,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,11 +44,19 @@ public class OutterController implements ACLOutterConstant {
     @RequestMapping(value = "index", method = {RequestMethod.GET, RequestMethod.POST})
     public String land(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String businessLine = request.getParameter(BUSINESS_LINE);
+        String outterBusinessLine = request.getParameter(OUTTER_BUSINESS_LINE);
+        String encoder = "utf-8";
         if (StringUtils.isEmpty(businessLine)) {
-            response.sendRedirect("/acl/error/error.html?msg=" + "业务线不能为空！！！");
+            String errorMsg = URLEncoder.encode("业务线不能为空！！！",encoder);
+            response.sendRedirect("/acl/error/error.html?msg=" +errorMsg);
             return null;
         }
-        request.setAttribute("resourceKey", request.getParameter(OUTTER_BUSINESS_LINE));
+        if (StringUtils.isEmpty(outterBusinessLine)) {
+            String errorMsg = URLEncoder.encode("请指定业务系统！！！",encoder);
+            response.sendRedirect("/acl/error/error.html?msg=" + errorMsg);
+            return null;
+        }
+        request.setAttribute("resourceKey", outterBusinessLine);
         request.setAttribute(BUSINESS_LINE, businessLine);
         return "outter/index";
     }
