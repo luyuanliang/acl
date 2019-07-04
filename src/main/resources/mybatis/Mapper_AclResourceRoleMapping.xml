@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.web.acl.dao.AclResourceRoleMappingDAO">
+
+    <resultMap id="AclResourceRoleMappingDO" type = "org.web.acl.domain.AclResourceRoleMappingDO">
+        <id column="aclResourceRoleMappingId" property="aclResourceRoleMappingId" />
+		<result column="aclResourceId"  property="aclResourceId"  />
+		<result column="aclRoleId"  property="aclRoleId"  />
+		<result column="businessLine"  property="businessLine"  />
+		<result column="inputer"  property="inputer"  />
+		<result column="createTime"  property="createTime"  />
+		<result column="updateTime"  property="updateTime"  />
+		<result column="isDelete"  property="isDelete"  />
+    </resultMap>
+
+    <sql id="all_columns">
+		 aclResourceRoleMappingId ,  aclResourceId ,  aclRoleId ,  businessLine ,  inputer ,  createTime ,  updateTime , isDelete
+	</sql>
+
+    <sql id="query_condition">
+		<if test = "aclResourceRoleMappingId != null " ><![CDATA[ AND aclResourceRoleMappingId = #{aclResourceRoleMappingId}]]></if>		
+		<if test = "aclResourceRoleMappingIdList != null " >
+			AND aclResourceRoleMappingId IN 
+			<foreach item="item" index="index" collection="aclResourceRoleMappingIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "aclResourceId != null " ><![CDATA[ AND aclResourceId = #{aclResourceId}]]></if>		
+		<if test = "aclResourceIdList != null " >
+			AND aclResourceId IN 
+			<foreach item="item" index="index" collection="aclResourceIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "aclRoleId != null " ><![CDATA[ AND aclRoleId = #{aclRoleId}]]></if>		
+		<if test = "aclRoleIdList != null " >
+			AND aclRoleId IN 
+			<foreach item="item" index="index" collection="aclRoleIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "businessLine != null " ><![CDATA[ AND businessLine = #{businessLine}]]></if>		
+	    <if test = "lessThanCreateTime != null " ><![CDATA[ AND createTime < #{lessThanCreateTime}]]></if>
+        <if test = "equalAndLessThanCreateTime != null " ><![CDATA[ AND createTime <= #{equalAndLessThanCreateTime}]]></if>
+        <if test = "moreThanCreateTime != null " ><![CDATA[ AND createTime > #{moreThanCreateTime}]]></if>
+        <if test = "equalAndMoreThanCreateTime != null " ><![CDATA[ AND createTime >= #{equalAndMoreThanCreateTime}]]></if>
+	    <if test = "lessThanUpdateTime != null " ><![CDATA[ AND updateTime < #{lessThanUpdateTime}]]></if>
+        <if test = "equalAndLessThanUpdateTime != null " ><![CDATA[ AND updateTime <= #{equalAndLessThanUpdateTime}]]></if>
+        <if test = "moreThanUpdateTime != null " ><![CDATA[ AND updateTime > #{moreThanUpdateTime}]]></if>
+        <if test = "equalAndMoreThanUpdateTime != null " ><![CDATA[ AND updateTime >= #{equalAndMoreThanUpdateTime}]]></if>
+		<if test = "isDelete != null " ><![CDATA[ AND isDelete = #{isDelete}]]></if>		
+    </sql>
+
+    <insert id="insertAclResourceRoleMapping" parameterType="org.web.acl.domain.AclResourceRoleMappingDO" useGeneratedKeys="true" keyProperty="aclResourceRoleMappingId">
+		INSERT INTO AclResourceRoleMapping (<include refid="all_columns" />) VALUES
+		(
+		#{aclResourceRoleMappingId} , #{aclResourceId} , #{aclRoleId} , #{businessLine} , #{inputer} , #{createTime} , #{updateTime} , #{isDelete}
+		)
+    </insert>
+
+	
+    <select id="selectAclResourceRoleMappingList" resultMap="AclResourceRoleMappingDO" parameterType="org.web.acl.query.QueryAclResourceRoleMapping">
+        SELECT <include refid="all_columns" /> FROM AclResourceRoleMapping
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+		<if test="orderByClause !=null" > ORDER BY ${orderByClause}</if>
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+		
+		<if test="startNum != null" > LIMIT #{startNum},#{pageSize}</if>
+    </select>
+
+	
+    <select id="countAclResourceRoleMappingList" resultType="int" parameterType="org.web.acl.query.QueryAclResourceRoleMapping">
+		SELECT COUNT(1) FROM AclResourceRoleMapping
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+    </select>
+
+    <select id="selectDistinctList" resultType="String" parameterType="String">
+        SELECT DISTINCT( ${distinct} ) FROM  AclResourceRoleMapping <where>  <include refid="query_condition"/> 	</where>
+    </select>
+
+    <select id="selectAclResourceRoleMappingByAclResourceRoleMappingId" resultMap="AclResourceRoleMappingDO" parameterType="Long">
+        SELECT <include refid="all_columns" /> FROM AclResourceRoleMapping WHERE aclResourceRoleMappingId = #{aclResourceRoleMappingId}
+    </select>
+
+    <update id="updateAclResourceRoleMappingByAclResourceRoleMappingId" parameterType="org.web.acl.domain.AclResourceRoleMappingDO">
+        UPDATE AclResourceRoleMapping
+		<set>
+			<if test="aclResourceId!=null"><![CDATA[aclResourceId=#{aclResourceId},]]></if>
+			<if test="aclRoleId!=null"><![CDATA[aclRoleId=#{aclRoleId},]]></if>
+			<if test="businessLine!=null"><![CDATA[businessLine=#{businessLine},]]></if>
+			<if test="inputer!=null"><![CDATA[inputer=#{inputer},]]></if>
+			<if test="createTime!=null"><![CDATA[createTime=#{createTime},]]></if>
+			<if test="updateTime!=null"><![CDATA[updateTime=#{updateTime},]]></if>
+			<if test="isDelete!=null"><![CDATA[isDelete=#{isDelete},]]></if>
+		</set>
+
+        <![CDATA[ WHERE  aclResourceRoleMappingId = #{aclResourceRoleMappingId} ]]>
+
+      </update>
+
+</mapper>
+
+

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.web.acl.dao.AclResourceAccountMappingDAO">
+
+    <resultMap id="AclResourceAccountMappingDO" type = "org.web.acl.domain.AclResourceAccountMappingDO">
+        <id column="aclResourceAccountMappingId" property="aclResourceAccountMappingId" />
+		<result column="businessLine"  property="businessLine"  />
+		<result column="aclResourceId"  property="aclResourceId"  />
+		<result column="aclAccountId"  property="aclAccountId"  />
+		<result column="accountNum"  property="accountNum"  />
+		<result column="inputer"  property="inputer"  />
+		<result column="createTime"  property="createTime"  />
+		<result column="updateTime"  property="updateTime"  />
+		<result column="isDelete"  property="isDelete"  />
+    </resultMap>
+
+    <sql id="all_columns">
+		 aclResourceAccountMappingId ,  businessLine ,  aclResourceId ,  aclAccountId ,  accountNum ,  inputer ,  createTime ,  updateTime , isDelete
+	</sql>
+
+    <sql id="query_condition">
+		<if test = "aclResourceAccountMappingId != null " ><![CDATA[ AND aclResourceAccountMappingId = #{aclResourceAccountMappingId}]]></if>		
+		<if test = "aclResourceAccountMappingIdList != null " >
+			AND aclResourceAccountMappingId IN 
+			<foreach item="item" index="index" collection="aclResourceAccountMappingIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "businessLine != null " ><![CDATA[ AND businessLine = #{businessLine}]]></if>		
+		<if test = "aclResourceId != null " ><![CDATA[ AND aclResourceId = #{aclResourceId}]]></if>		
+		<if test = "aclResourceIdList != null " >
+			AND aclResourceId IN 
+			<foreach item="item" index="index" collection="aclResourceIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "aclAccountId != null " ><![CDATA[ AND aclAccountId = #{aclAccountId}]]></if>		
+		<if test = "aclAccountIdList != null " >
+			AND aclAccountId IN 
+			<foreach item="item" index="index" collection="aclAccountIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "accountNum != null " ><![CDATA[ AND accountNum = #{accountNum}]]></if>		
+	    <if test = "lessThanCreateTime != null " ><![CDATA[ AND createTime < #{lessThanCreateTime}]]></if>
+        <if test = "equalAndLessThanCreateTime != null " ><![CDATA[ AND createTime <= #{equalAndLessThanCreateTime}]]></if>
+        <if test = "moreThanCreateTime != null " ><![CDATA[ AND createTime > #{moreThanCreateTime}]]></if>
+        <if test = "equalAndMoreThanCreateTime != null " ><![CDATA[ AND createTime >= #{equalAndMoreThanCreateTime}]]></if>
+	    <if test = "lessThanUpdateTime != null " ><![CDATA[ AND updateTime < #{lessThanUpdateTime}]]></if>
+        <if test = "equalAndLessThanUpdateTime != null " ><![CDATA[ AND updateTime <= #{equalAndLessThanUpdateTime}]]></if>
+        <if test = "moreThanUpdateTime != null " ><![CDATA[ AND updateTime > #{moreThanUpdateTime}]]></if>
+        <if test = "equalAndMoreThanUpdateTime != null " ><![CDATA[ AND updateTime >= #{equalAndMoreThanUpdateTime}]]></if>
+		<if test = "isDelete != null " ><![CDATA[ AND isDelete = #{isDelete}]]></if>		
+    </sql>
+
+    <insert id="insertAclResourceAccountMapping" parameterType="org.web.acl.domain.AclResourceAccountMappingDO" useGeneratedKeys="true" keyProperty="aclResourceAccountMappingId">
+		INSERT INTO AclResourceAccountMapping (<include refid="all_columns" />) VALUES
+		(
+		#{aclResourceAccountMappingId} , #{businessLine} , #{aclResourceId} , #{aclAccountId} , #{accountNum} , #{inputer} , #{createTime} , #{updateTime} , #{isDelete}
+		)
+    </insert>
+
+	
+    <select id="selectAclResourceAccountMappingList" resultMap="AclResourceAccountMappingDO" parameterType="org.web.acl.query.QueryAclResourceAccountMapping">
+        SELECT <include refid="all_columns" /> FROM AclResourceAccountMapping
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+		<if test="orderByClause !=null" > ORDER BY ${orderByClause}</if>
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+		
+		<if test="startNum != null" > LIMIT #{startNum},#{pageSize}</if>
+    </select>
+
+	
+    <select id="countAclResourceAccountMappingList" resultType="int" parameterType="org.web.acl.query.QueryAclResourceAccountMapping">
+		SELECT COUNT(1) FROM AclResourceAccountMapping
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+    </select>
+
+    <select id="selectDistinctList" resultType="String" parameterType="String">
+        SELECT DISTINCT( ${distinct} ) FROM  AclResourceAccountMapping <where>  <include refid="query_condition"/> 	</where>
+    </select>
+
+    <select id="selectAclResourceAccountMappingByAclResourceAccountMappingId" resultMap="AclResourceAccountMappingDO" parameterType="Long">
+        SELECT <include refid="all_columns" /> FROM AclResourceAccountMapping WHERE aclResourceAccountMappingId = #{aclResourceAccountMappingId}
+    </select>
+
+    <update id="updateAclResourceAccountMappingByAclResourceAccountMappingId" parameterType="org.web.acl.domain.AclResourceAccountMappingDO">
+        UPDATE AclResourceAccountMapping
+		<set>
+			<if test="businessLine!=null"><![CDATA[businessLine=#{businessLine},]]></if>
+			<if test="aclResourceId!=null"><![CDATA[aclResourceId=#{aclResourceId},]]></if>
+			<if test="aclAccountId!=null"><![CDATA[aclAccountId=#{aclAccountId},]]></if>
+			<if test="accountNum!=null"><![CDATA[accountNum=#{accountNum},]]></if>
+			<if test="inputer!=null"><![CDATA[inputer=#{inputer},]]></if>
+			<if test="createTime!=null"><![CDATA[createTime=#{createTime},]]></if>
+			<if test="updateTime!=null"><![CDATA[updateTime=#{updateTime},]]></if>
+			<if test="isDelete!=null"><![CDATA[isDelete=#{isDelete},]]></if>
+		</set>
+
+        <![CDATA[ WHERE  aclResourceAccountMappingId = #{aclResourceAccountMappingId} ]]>
+
+      </update>
+
+</mapper>
+
+

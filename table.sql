@@ -64,7 +64,7 @@ CREATE TABLE `AclResourceAccountMapping` (
   `updateTime` datetime NOT NULL COMMENT '记录修改时间',
   `isDelete` varchar(25) NOT NULL COMMENT '记录是否逻辑删除',
   PRIMARY KEY (`aclResourceAccountMappingId`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='ACL资源用户映射表'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='ACL资源用户映射表';
 
 CREATE TABLE `AclResourceRoleMapping` (
   `aclResourceRoleMappingId` int(11) NOT NULL AUTO_INCREMENT COMMENT '表主键',
@@ -99,6 +99,6 @@ CREATE TABLE `SessionAccount` (
   `password` varchar(25) NOT NULL COMMENT '密码',
   `isDelete` varchar(25) NOT NULL COMMENT '记录是否逻辑删除',
   PRIMARY KEY (`sessionAcountId`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='默认账户表'
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='默认账户表';
 
 

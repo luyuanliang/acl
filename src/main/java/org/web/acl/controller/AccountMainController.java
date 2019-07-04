@@ -16,7 +16,10 @@ import java.io.IOException;
 @Controller
 @RequestMapping("")
 public class AccountMainController {
-
+public static void main(String[] args) {
+	System.out.println("SS");
+}
+	
     @RequestMapping(value = "main", method = {RequestMethod.GET, RequestMethod.POST})
     public String land(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getRemotePort();

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.web.acl.dao.AclResourceDAO">
+
+    <resultMap id="AclResourceDO" type = "org.web.acl.domain.AclResourceDO">
+        <id column="aclResourceId" property="aclResourceId" />
+        <result column="businessLine"  property="businessLine"  />
+        <result column="resourceName"  property="resourceName"  />
+        <result column="resourceKey"  property="resourceKey"  />
+        <result column="resourceValue"  property="resourceValue"  />
+        <result column="resourceLevel"  property="resourceLevel"  />
+        <result column="extendsValue"  property="extendsValue"  />
+        <result column="description"  property="description"  />
+        <result column="resourceStatus"  property="resourceStatus"  />
+        <result column="resourceType"  property="resourceType"  />
+        <result column="firstLevel"  property="firstLevel"  />
+        <result column="secondLevel"  property="secondLevel"  />
+        <result column="thirdLevel"  property="thirdLevel"  />
+        <result column="fourthLevel"  property="fourthLevel"  />
+        <result column="fifthLevel"  property="fifthLevel"  />
+        <result column="inputer"  property="inputer"  />
+        <result column="inputTime"  property="inputTime"  />
+        <result column="updateTime"  property="updateTime"  />
+        <result column="isDelete"  property="isDelete"  />
+    </resultMap>
+
+    <sql id="all_columns">
+        aclResourceId ,  businessLine ,  resourceName ,  resourceKey ,  resourceValue ,  resourceLevel ,  extendsValue ,  description ,  resourceStatus ,  resourceType ,  firstLevel ,  secondLevel ,  thirdLevel ,  fourthLevel ,  fifthLevel ,  inputer ,  inputTime ,  updateTime , isDelete
+    </sql>
+
+    <sql id="query_condition">
+        <if test = "aclResourceId != null " ><![CDATA[ AND aclResourceId = #{aclResourceId}]]></if>
+        <if test = "aclResourceIdList != null " >
+            AND aclResourceId IN
+            <foreach item="item" index="index" collection="aclResourceIdList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "businessLine != null " ><![CDATA[ AND businessLine = #{businessLine}]]></if>
+        <if test = "resourceName != null " ><![CDATA[ AND resourceName = #{resourceName}]]></if>
+        <if test = "resourceKey != null " ><![CDATA[ AND resourceKey = #{resourceKey}]]></if>
+        <if test = "resourceValue != null " ><![CDATA[ AND resourceValue = #{resourceValue}]]></if>
+        <if test = "resourceLevel != null " ><![CDATA[ AND resourceLevel = #{resourceLevel}]]></if>
+        <if test = "extendsValue != null " ><![CDATA[ AND extendsValue = #{extendsValue}]]></if>
+        <if test = "lessThanExtendsValue != null " ><![CDATA[ AND extendsValue < #{lessThanExtendsValue}]]></if>
+        <if test = "equalAndLessThanExtendsValue != null " ><![CDATA[ AND extendsValue <= #{equalAndLessThanExtendsValue}]]></if>
+        <if test = "moreThanExtendsValue != null " ><![CDATA[ AND extendsValue > #{moreThanExtendsValue}]]></if>
+        <if test = "equalAndMoreThanExtendsValue != null " ><![CDATA[ AND extendsValue >= #{equalAndMoreThanExtendsValue}]]></if>
+
+        <if test = "resourceStatus != null " ><![CDATA[ AND resourceStatus = #{resourceStatus}]]></if>
+        <if test = "resourceStatusList != null " >
+            AND resourceStatus IN
+            <foreach item="item" index="index" collection="resourceStatusList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "resourceType != null " ><![CDATA[ AND resourceType = #{resourceType}]]></if>
+        <if test = "firstLevel != null " ><![CDATA[ AND firstLevel = #{firstLevel}]]></if>
+        <if test = "firstLevelList != null " >
+            AND firstLevel IN
+            <foreach item="item" index="index" collection="firstLevelList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "secondLevel != null " ><![CDATA[ AND secondLevel = #{secondLevel}]]></if>
+        <if test = "secondLevelList != null " >
+            AND secondLevel IN
+            <foreach item="item" index="index" collection="secondLevelList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "thirdLevel != null " ><![CDATA[ AND thirdLevel = #{thirdLevel}]]></if>
+        <if test = "thirdLevelList != null " >
+            AND thirdLevel IN
+            <foreach item="item" index="index" collection="thirdLevelList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "fourthLevel != null " ><![CDATA[ AND fourthLevel = #{fourthLevel}]]></if>
+        <if test = "fourthLevelList != null " >
+            AND fourthLevel IN
+            <foreach item="item" index="index" collection="fourthLevelList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "fifthLevel != null " ><![CDATA[ AND fifthLevel = #{fifthLevel}]]></if>
+        <if test = "fifthLevelList != null " >
+            AND fifthLevel IN
+            <foreach item="item" index="index" collection="fifthLevelList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "inputTime != null " ><![CDATA[ AND inputTime = #{inputTime}]]></if>
+        <if test = "lessThanInputTime != null " ><![CDATA[ AND inputTime < #{lessThanInputTime}]]></if>
+        <if test = "equalAndLessThanInputTime != null " ><![CDATA[ AND inputTime <= #{equalAndLessThanInputTime}]]></if>
+        <if test = "moreThanInputTime != null " ><![CDATA[ AND inputTime > #{moreThanInputTime}]]></if>
+        <if test = "equalAndMoreThanInputTime != null " ><![CDATA[ AND inputTime >= #{equalAndMoreThanInputTime}]]></if>
+        <if test = "updateTime != null " ><![CDATA[ AND updateTime = #{updateTime}]]></if>
+        <if test = "lessThanUpdateTime != null " ><![CDATA[ AND updateTime < #{lessThanUpdateTime}]]></if>
+        <if test = "equalAndLessThanUpdateTime != null " ><![CDATA[ AND updateTime <= #{equalAndLessThanUpdateTime}]]></if>
+        <if test = "moreThanUpdateTime != null " ><![CDATA[ AND updateTime > #{moreThanUpdateTime}]]></if>
+        <if test = "equalAndMoreThanUpdateTime != null " ><![CDATA[ AND updateTime >= #{equalAndMoreThanUpdateTime}]]></if>
+        <if test = "isDelete != null " ><![CDATA[ AND isDelete = #{isDelete}]]></if>
+    </sql>
+
+    <insert id="insertAclResource" parameterType="org.web.acl.domain.AclResourceDO" useGeneratedKeys="true" keyProperty="aclResourceId">
+        INSERT INTO AclResource (<include refid="all_columns" />) VALUES
+        (
+        #{aclResourceId} , #{businessLine} , #{resourceName} , #{resourceKey} , #{resourceValue} , #{resourceLevel} , #{extendsValue} , #{description} , #{resourceStatus} , #{resourceType} , #{firstLevel} , #{secondLevel} , #{thirdLevel} , #{fourthLevel} , #{fifthLevel} , #{inputer} , #{inputTime} , #{updateTime} , #{isDelete}
+        )
+    </insert>
+
+
+    <select id="selectAclResourceList" resultMap="AclResourceDO" parameterType="org.web.acl.query.QueryAclResource">
+        SELECT <include refid="all_columns" /> FROM AclResource
+        <where>
+            <include refid="query_condition"/>
+        </where>
+        <if test="orderByClause !=null" > ORDER BY ${orderByClause}</if>
+        <!-- add order or query info. -->
+        <![CDATA[
+
+		]]>
+
+        <if test="startNum != null" > LIMIT #{startNum},#{pageSize}</if>
+    </select>
+
+
+    <select id="countAclResourceList" resultType="int" parameterType="org.web.acl.query.QueryAclResource">
+        SELECT COUNT(1) FROM AclResource
+        <where>
+            <include refid="query_condition"/>
+        </where>
+
+        <!-- add order or query info. -->
+        <![CDATA[
+
+		]]>
+    </select>
+
+    <select id="selectDistinctList" resultType="String" parameterType="String">
+        SELECT DISTINCT( ${distinct} ) FROM  AclResource <where>  <include refid="query_condition"/> 	</where>
+    </select>
+
+    <select id="selectAclResourceByAclResourceId" resultMap="AclResourceDO" parameterType="Long">
+        SELECT <include refid="all_columns" /> FROM AclResource WHERE aclResourceId = #{aclResourceId}
+    </select>
+
+    <update id="updateAclResourceByAclResourceId" parameterType="org.web.acl.domain.AclResourceDO">
+        UPDATE AclResource
+        <set>
+            <if test="businessLine!=null"><![CDATA[businessLine=#{businessLine},]]></if>
+            <if test="resourceName!=null"><![CDATA[resourceName=#{resourceName},]]></if>
+            <if test="resourceKey!=null"><![CDATA[resourceKey=#{resourceKey},]]></if>
+            <if test="resourceValue!=null"><![CDATA[resourceValue=#{resourceValue},]]></if>
+            <if test="resourceLevel!=null"><![CDATA[resourceLevel=#{resourceLevel},]]></if>
+            <if test="extendsValue!=null"><![CDATA[extendsValue=#{extendsValue},]]></if>
+            <if test="description!=null"><![CDATA[description=#{description},]]></if>
+            <if test="resourceStatus!=null"><![CDATA[resourceStatus=#{resourceStatus},]]></if>
+            <if test="resourceType!=null"><![CDATA[resourceType=#{resourceType},]]></if>
+            <if test="firstLevel!=null"><![CDATA[firstLevel=#{firstLevel},]]></if>
+            <![CDATA[secondLevel=#{secondLevel},]]>
+            <![CDATA[thirdLevel=#{thirdLevel},]]>
+            <![CDATA[fourthLevel=#{fourthLevel},]]>
+            <![CDATA[fifthLevel=#{fifthLevel},]]>
+            <if test="inputer!=null"><![CDATA[inputer=#{inputer},]]></if>
+            <if test="inputTime!=null"><![CDATA[inputTime=#{inputTime},]]></if>
+            <if test="updateTime!=null"><![CDATA[updateTime=#{updateTime},]]></if>
+            <if test="isDelete!=null"><![CDATA[isDelete=#{isDelete},]]></if>
+        </set>
+
+        <![CDATA[ WHERE  aclResourceId = #{aclResourceId} ]]>
+
+    </update>
+
+</mapper>
+

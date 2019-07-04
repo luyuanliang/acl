@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.web.acl.dao.AclRoleDAO">
+
+    <resultMap id="AclRoleDO" type = "org.web.acl.domain.AclRoleDO">
+        <id column="aclRoleId" property="aclRoleId" />
+		<result column="roleGroup"  property="roleGroup"  />
+		<result column="roleName"  property="roleName"  />
+		<result column="description"  property="description"  />
+		<result column="businessLine"  property="businessLine"  />
+		<result column="inputer"  property="inputer"  />
+		<result column="createTime"  property="createTime"  />
+		<result column="updateTime"  property="updateTime"  />
+		<result column="isDelete"  property="isDelete"  />
+    </resultMap>
+
+    <sql id="all_columns">
+		 aclRoleId ,  roleGroup ,  roleName ,  description ,  businessLine ,  inputer ,  createTime ,  updateTime , isDelete
+	</sql>
+
+    <sql id="query_condition">
+		<if test = "aclRoleId != null " ><![CDATA[ AND aclRoleId = #{aclRoleId}]]></if>		
+		<if test = "aclRoleIdList != null " >
+			AND aclRoleId IN 
+			<foreach item="item" index="index" collection="aclRoleIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "roleGroup != null " ><![CDATA[ AND roleGroup = #{roleGroup}]]></if>		
+		<if test = "roleGroupList != null " >
+			AND roleGroup IN 
+			<foreach item="item" index="index" collection="roleGroupList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "roleName != null " ><![CDATA[ AND roleName = #{roleName}]]></if>		
+		<if test = "businessLine != null " ><![CDATA[ AND businessLine = #{businessLine}]]></if>		
+		<if test = "businessLineList != null " >
+			AND businessLine IN 
+			<foreach item="item" index="index" collection="businessLineList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "isDelete != null " ><![CDATA[ AND isDelete = #{isDelete}]]></if>
+    </sql>
+
+    <insert id="insertAclRole" parameterType="org.web.acl.domain.AclRoleDO" useGeneratedKeys="true" keyProperty="aclRoleId">
+		INSERT INTO AclRole (<include refid="all_columns" />) VALUES
+		(
+		#{aclRoleId} , #{roleGroup} , #{roleName} , #{description} , #{businessLine} , #{inputer} , #{createTime} , #{updateTime} , #{isDelete}
+		)
+    </insert>
+
+	
+    <select id="selectAclRoleList" resultMap="AclRoleDO" parameterType="org.web.acl.query.QueryAclRole">
+        SELECT <include refid="all_columns" /> FROM AclRole
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+		<if test="orderByClause !=null" > ORDER BY ${orderByClause}</if>
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+		
+		<if test="startNum != null" > LIMIT #{startNum},#{pageSize}</if>
+    </select>
+
+	
+    <select id="countAclRoleList" resultType="int" parameterType="org.web.acl.query.QueryAclRole">
+		SELECT COUNT(1) FROM AclRole
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+    </select>
+
+    <select id="selectDistinctList" resultType="String" parameterType="String">
+        SELECT DISTINCT( ${distinct} ) FROM  AclRole <where>  <include refid="query_condition"/> 	</where>
+    </select>
+
+    <select id="selectAclRoleByAclRoleId" resultMap="AclRoleDO" parameterType="Long">
+        SELECT <include refid="all_columns" /> FROM AclRole WHERE aclRoleId = #{aclRoleId}
+    </select>
+
+    <update id="updateAclRoleByAclRoleId" parameterType="org.web.acl.domain.AclRoleDO">
+        UPDATE AclRole
+		<set>
+			<if test="roleGroup!=null"><![CDATA[roleGroup=#{roleGroup},]]></if>
+			<if test="roleName!=null"><![CDATA[roleName=#{roleName},]]></if>
+			<if test="description!=null"><![CDATA[description=#{description},]]></if>
+			<if test="businessLine!=null"><![CDATA[businessLine=#{businessLine},]]></if>
+			<if test="inputer!=null"><![CDATA[inputer=#{inputer},]]></if>
+			<if test="createTime!=null"><![CDATA[createTime=#{createTime},]]></if>
+			<if test="updateTime!=null"><![CDATA[updateTime=#{updateTime},]]></if>
+			<if test="isDelete!=null"><![CDATA[isDelete=#{isDelete},]]></if>
+		</set>
+
+        <![CDATA[ WHERE  aclRoleId = #{aclRoleId} ]]>
+
+      </update>
+
+</mapper>
+
+

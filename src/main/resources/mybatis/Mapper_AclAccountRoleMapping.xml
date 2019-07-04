@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.web.acl.dao.AclAccountRoleMappingDAO">
+
+    <resultMap id="AclAccountRoleMappingDO" type = "org.web.acl.domain.AclAccountRoleMappingDO">
+        <id column="aclAccountRoleMappingId" property="aclAccountRoleMappingId" />
+		<result column="businessLine"  property="businessLine"  />
+		<result column="aclAccountId"  property="aclAccountId"  />
+		<result column="accountNum"  property="accountNum"  />
+		<result column="aclRoleId"  property="aclRoleId"  />
+		<result column="inputer"  property="inputer"  />
+		<result column="createTime"  property="createTime"  />
+		<result column="updateTime"  property="updateTime"  />
+		<result column="isDelete"  property="isDelete"  />
+    </resultMap>
+
+    <sql id="all_columns">
+		 aclAccountRoleMappingId ,  businessLine ,  aclAccountId ,  accountNum ,  aclRoleId ,  inputer ,  createTime ,  updateTime , isDelete
+	</sql>
+
+    <sql id="query_condition">
+		<if test = "aclAccountRoleMappingId != null " ><![CDATA[ AND aclAccountRoleMappingId = #{aclAccountRoleMappingId}]]></if>		
+		<if test = "aclAccountRoleMappingIdList != null " >
+			AND aclAccountRoleMappingId IN 
+			<foreach item="item" index="index" collection="aclAccountRoleMappingIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "businessLine != null " ><![CDATA[ AND businessLine = #{businessLine}]]></if>		
+		<if test = "aclAccountId != null " ><![CDATA[ AND aclAccountId = #{aclAccountId}]]></if>		
+		<if test = "aclAccountIdList != null " >
+			AND aclAccountId IN 
+			<foreach item="item" index="index" collection="aclAccountIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "accountNum != null " ><![CDATA[ AND accountNum = #{accountNum}]]></if>		
+		<if test = "accountNumList != null " >
+			AND accountNum IN 
+			<foreach item="item" index="index" collection="accountNumList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "aclRoleId != null " ><![CDATA[ AND aclRoleId = #{aclRoleId}]]></if>		
+		<if test = "aclRoleIdList != null " >
+			AND aclRoleId IN 
+			<foreach item="item" index="index" collection="aclRoleIdList" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+		<if test = "isDelete != null " ><![CDATA[ AND isDelete = #{isDelete}]]></if>		
+    </sql>
+
+    <insert id="insertAclAccountRoleMapping" parameterType="org.web.acl.domain.AclAccountRoleMappingDO" useGeneratedKeys="true" keyProperty="aclAccountRoleMappingId">
+		INSERT INTO AclAccountRoleMapping (<include refid="all_columns" />) VALUES
+		(
+		#{aclAccountRoleMappingId} , #{businessLine} , #{aclAccountId} , #{accountNum} , #{aclRoleId} , #{inputer} , #{createTime} , #{updateTime} , #{isDelete}
+		)
+    </insert>
+
+	
+    <select id="selectAclAccountRoleMappingList" resultMap="AclAccountRoleMappingDO" parameterType="org.web.acl.query.QueryAclAccountRoleMapping">
+        SELECT <include refid="all_columns" /> FROM AclAccountRoleMapping
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+		<if test="orderByClause !=null" > ORDER BY ${orderByClause}</if>
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+		
+		<if test="startNum != null" > LIMIT #{startNum},#{pageSize}</if>
+    </select>
+
+	
+    <select id="countAclAccountRoleMappingList" resultType="int" parameterType="org.web.acl.query.QueryAclAccountRoleMapping">
+		SELECT COUNT(1) FROM AclAccountRoleMapping
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+    </select>
+
+    <select id="selectDistinctList" resultType="String" parameterType="String">
+        SELECT DISTINCT( ${distinct} ) FROM  AclAccountRoleMapping <where>  <include refid="query_condition"/> 	</where>
+    </select>
+
+    <select id="selectAclAccountRoleMappingByAclAccountRoleMappingId" resultMap="AclAccountRoleMappingDO" parameterType="Long">
+        SELECT <include refid="all_columns" /> FROM AclAccountRoleMapping WHERE aclAccountRoleMappingId = #{aclAccountRoleMappingId}
+    </select>
+
+    <update id="updateAclAccountRoleMappingByAclAccountRoleMappingId" parameterType="org.web.acl.domain.AclAccountRoleMappingDO">
+        UPDATE AclAccountRoleMapping
+		<set>
+			<if test="businessLine!=null"><![CDATA[businessLine=#{businessLine},]]></if>
+			<if test="aclAccountId!=null"><![CDATA[aclAccountId=#{aclAccountId},]]></if>
+			<if test="accountNum!=null"><![CDATA[accountNum=#{accountNum},]]></if>
+			<if test="aclRoleId!=null"><![CDATA[aclRoleId=#{aclRoleId},]]></if>
+			<if test="inputer!=null"><![CDATA[inputer=#{inputer},]]></if>
+			<if test="createTime!=null"><![CDATA[createTime=#{createTime},]]></if>
+			<if test="updateTime!=null"><![CDATA[updateTime=#{updateTime},]]></if>
+			<if test="isDelete!=null"><![CDATA[isDelete=#{isDelete},]]></if>
+		</set>
+
+        <![CDATA[ WHERE  aclAccountRoleMappingId = #{aclAccountRoleMappingId} ]]>
+
+      </update>
+
+</mapper>
+
+
