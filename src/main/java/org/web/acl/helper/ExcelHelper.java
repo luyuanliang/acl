@@ -21,9 +21,9 @@ import java.util.*;
 public class ExcelHelper {
 
 
-    public static List<Object> parseExcel(InputStream in, String packageName) throws ServiceException {
-        Map<Integer, String> columnMap = new HashMap<Integer, String>();
-        List<Object> objectList = new ArrayList<Object>();
+    List<Object> parseExcel(InputStream in, String packageName) throws ServiceException {
+        Map<Integer, String> columnMap = new HashMap<>();
+        List<Object> objectList = new ArrayList<>();
         try {
             Workbook workBook = new XSSFWorkbook(in);
             Sheet sheet = workBook.getSheetAt(0);
@@ -38,9 +38,9 @@ public class ExcelHelper {
 
             int columnNum = columnMap.keySet().size();
             int totalRows = sheet.getPhysicalNumberOfRows();
-            List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+            List<Map<String, String>> list = new ArrayList<>();
             for (int i = 1; i < totalRows; i++) {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 Row dataRow = sheet.getRow(i);
 
                 for (int j = 0; j < columnNum; j++) {
@@ -49,7 +49,7 @@ public class ExcelHelper {
                         map.put(columnMap.get(j), null);
                         continue;
                     }
-                    String value = null;
+                    String value;
                     if (Cell.CELL_TYPE_NUMERIC == cell.getCellType()) {
                         DecimalFormat df = new DecimalFormat("0");
                         value = df.format(cell.getNumericCellValue());
